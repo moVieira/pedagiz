@@ -40,7 +40,16 @@
       "Bash(git fetch *)",
       "Bash(curl -s http://localhost:3000/)",
       "Bash(curl -s -o /dev/null -w \"loja.html: %{http_code}\\\\n\" http://localhost:3000/loja.html)",
-      "Bash(curl -s -o /dev/null -w \"api/health: %{http_code}\\\\n\" http://localhost:3000/api/health)"
+      "Bash(curl -s -o /dev/null -w \"api/health: %{http_code}\\\\n\" http://localhost:3000/api/health)",
+      "Bash(curl -s -o /dev/null -w \"root: %{http_code}\\\\n\" https://pedagix-production.up.railway.app/)",
+      "Bash(curl -s -w \"\\\\nHTTP %{http_code}\\\\n\" https://pedagix-production.up.railway.app/api/health)",
+      "Bash(curl -s -o /dev/null -w \"loja.html: %{http_code}\\\\n\" https://pedagix-production.up.railway.app/loja.html)",
+      "Bash(curl -s -w \"\\\\napi/health: %{http_code}\\\\n\" https://pedagix-production.up.railway.app/api/health)",
+      "Bash(curl -s -o /dev/null -w \"css: %{http_code}\\\\n\" https://pedagix-production.up.railway.app/css/styles.css)",
+      "Bash(curl -s -X POST https://backboard.railway.com/graphql/v2 -H 'Authorization: Bearer 0b98d58d-2a1e-4e44-88f3-d8a844835710' -H 'Content-Type: application/json' -d '{\"query\":\"query { me { id name email } }\"}')",
+      "Bash(curl -s -X POST https://backboard.railway.com/graphql/v2 -H 'Project-Access-Token: 0b98d58d-2a1e-4e44-88f3-d8a844835710' -H 'Content-Type: application/json' -d '{\"query\":\"query { projectToken { projectId environmentId } }\"}')",
+      "WebFetch(domain:docs.railway.com)",
+      "Bash(docker --version)"
     ]
   }
 }
