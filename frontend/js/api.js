@@ -1,4 +1,4 @@
-// Cliente HTTP simples para a API do Pastel & Giz.
+// Cliente HTTP simples para a API do Pedagix.
 const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
   ? 'http://localhost:3000/api'
   : '/api';

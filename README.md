@@ -1,4 +1,4 @@
-# Pastel & Giz
+# Pedagix
 
 Marketplace de materiais digitais (PDFs e templates editáveis) para professores.
 Frontend em HTML/CSS/JS puro, backend em Node.js + Express, banco MySQL e
@@ -7,7 +7,7 @@ pagamento via Pix usando o SDK do Mercado Pago.
 ## Estrutura
 
 ```
-pastel-e-giz/
+pedagix/
 ├── backend/
 │   ├── database/schema.sql        # schema + seed de categorias
 │   ├── src/

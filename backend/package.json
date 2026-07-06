@@ -1,7 +1,7 @@
 {
-  "name": "pastel-e-giz-backend",
+  "name": "pedagix-backend",
   "version": "1.0.0",
-  "description": "API do Pastel & Giz - venda de conteudo digital para professores",
+  "description": "API do Pedagix - venda de conteudo digital para professores",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",

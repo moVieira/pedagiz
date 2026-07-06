@@ -1,8 +1,8 @@
--- Banco de dados do Pastel & Giz
-CREATE DATABASE IF NOT EXISTS pastel_e_giz
+-- Banco de dados do Pedagix
+CREATE DATABASE IF NOT EXISTS pedagix
   CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
-USE pastel_e_giz;
+USE pedagix;
 
 CREATE TABLE users (
   id INT AUTO_INCREMENT PRIMARY KEY,

@@ -19,6 +19,11 @@ app.use(cors());
 app.use(express.json());
 app.use('/uploads', express.static(path.join(__dirname, '..', process.env.UPLOAD_DIR || 'uploads')));
 
+// Em produção o Express também serve o frontend estático (mesma origem, sem
+// CORS a configurar). Em dev local o frontend continua rodando à parte via
+// Live Server/npx serve, então isso só entra em uso quando implantado.
+app.use(express.static(path.join(__dirname, '..', '..', 'frontend')));
+
 app.get('/api/health', (req, res) => res.json({ ok: true }));
 
 app.use('/api/auth', authRoutes);
