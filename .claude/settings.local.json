@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(Get-ChildItem -Recurse \"C:\\\\Users\\\\moise\\\\pastel-e-giz\" -File | Where-Object { $_.FullName -notmatch 'node_modules' } | Select-Object @{N='Path';E={$_.FullName.Replace\\(\"C:\\\\Users\\\\moise\\\\pastel-e-giz\\\\\",\"\"\\)}} | Sort-Object Path | Format-Table -AutoSize)",
+      "WebFetch(domain:www.mercadopago.com.ar)"
+    ]
+  }
+}

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Entrar · Pastel &amp; Giz</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="index.html">
+      <div class="brand-mark">✦</div>
+      <div class="brand-name">Pastel <span class="amp">&amp;</span> Giz</div>
+    </a>
+    <div style="flex:1;"></div>
+  </div>
+</header>
+
+<main class="auth-shell">
+  <h1>Bem-vinda de volta</h1>
+  <p class="sub">Entre para acessar seus materiais e suas compras.</p>
+  <p id="form-error" class="form-error"></p>
+  <form id="login-form">
+    <div class="field">
+      <label for="email">E-mail</label>
+      <input type="email" name="email" id="email" required autocomplete="email">
+    </div>
+    <div class="field">
+      <label for="password">Senha</label>
+      <input type="password" name="password" id="password" required autocomplete="current-password">
+    </div>
+    <button class="btn btn-dark btn-block" type="submit">Entrar</button>
+  </form>
+  <p class="auth-switch">Ainda não tem conta? <a href="cadastro.html">Cadastre-se</a></p>
+</main>
+
+<script src="js/api.js"></script>
+<script src="js/cart.js"></script>
+<script src="js/auth.js"></script>
+</body>
+</html>

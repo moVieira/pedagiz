@@ -1,0 +1,63 @@
+document.addEventListener('DOMContentLoaded', async () => {
+  const params = new URLSearchParams(window.location.search);
+  const slug = params.get('slug');
+  const root = document.getElementById('store-root');
+  if (!root) return;
+  if (!slug) {
+    root.innerHTML = '<p class="empty-state">Loja não encontrada.</p>';
+    return;
+  }
+
+  try {
+    const { creator, products } = await Api.getCreator(slug);
+    document.title = `${creator.store_name} · Pastel & Giz`;
+    const tint = tintFor(creator.slug);
+
+    root.innerHTML = `
+      <div class="breadcrumb"><a href="index.html">Início</a> &nbsp;›&nbsp; Criadores &nbsp;›&nbsp; <span>${escapeHtml(creator.store_name)}</span></div>
+      <div class="store-cover ${tint}"></div>
+      <div class="store-profile">
+        <div class="store-id">
+          <div class="store-logo">${escapeHtml((creator.store_name || '?')[0])}</div>
+          <div>
+            <div class="store-name-row">
+              <h1>${escapeHtml(creator.store_name)}</h1>
+              ${creator.verified ? '<span class="verified-badge">✓ Verificado</span>' : ''}
+            </div>
+            <div class="store-meta">${escapeHtml(creator.category_label || '')}${creator.location ? ' · ' + escapeHtml(creator.location) : ''}</div>
+          </div>
+        </div>
+        <div class="store-actions">
+          <button class="btn btn-dark" id="follow-btn" type="button">＋ Seguir</button>
+        </div>
+      </div>
+      <div class="store-bio-row">
+        <p class="store-bio">${escapeHtml(creator.bio || '')}</p>
+        <div class="store-stats">
+          <div><div class="stat-n">${creator.product_count}</div><div class="stat-l">materiais</div></div>
+          <div><div class="stat-n">${creator.sales_count}</div><div class="stat-l">vendas</div></div>
+          <div><div class="stat-n">${formatRating(creator.rating)} ★</div><div class="stat-l">avaliação</div></div>
+        </div>
+      </div>
+      <div class="product-grid" id="store-products" style="margin-top:28px;">
+        ${products.map(renderProductCard).join('') || '<p class="empty-state">Nenhum material publicado ainda.</p>'}
+      </div>
+    `;
+
+    const followBtn = document.getElementById('follow-btn');
+    followBtn.addEventListener('click', async () => {
+      if (!Auth.isLogged()) { window.location.href = 'login.html'; return; }
+      try {
+        await Api.follow(creator.id);
+        followBtn.textContent = '✓ Seguindo';
+      } catch (err) {
+        console.error(err);
+      }
+    });
+
+    wireProductActions(document.getElementById('store-products'));
+  } catch (err) {
+    root.innerHTML = '<p class="empty-state">Loja não encontrada.</p>';
+    console.error(err);
+  }
+});
