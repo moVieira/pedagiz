@@ -411,7 +411,7 @@ h2.section-title { font-family: var(--font-display); font-weight: 700; font-size
 }
 
 @media (max-width: 640px) {
-  .container { padding: 0 20px; }
+  .container { padding: 0 24px; }
 
   /* Header: empilha busca abaixo da linha marca/ações e esconde o menu central */
   .site-header .container { flex-wrap: wrap; gap: 10px 14px; padding-top: 12px; padding-bottom: 12px; }
