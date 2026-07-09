@@ -71,7 +71,9 @@
       "Bash(pkill -f \"http.server 8899\")",
       "Bash(PYTHONIOENCODING=utf-8 python3)",
       "Bash(PYTHONIOENCODING=utf-8 python)",
-      "Bash(node shots.js)"
+      "Bash(node shots.js)",
+      "Bash(curl -s -o /dev/null -w \"HTTP %{http_code}\\\\n\" https://pedagix-production.up.railway.app/uploads/1783633722118-4a8d2daa76a325fe.png)",
+      "Bash(curl -s https://pedagix-production.up.railway.app/css/styles.css)"
     ]
   }
 }

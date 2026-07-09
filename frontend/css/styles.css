@@ -131,7 +131,7 @@ input, select, textarea { font-family: inherit; }
 /* ---------- Hero ---------- */
 .hero {
   display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 56px; align-items: center;
-  padding: 64px 0 40px;
+  padding-top: 64px; padding-bottom: 40px;
 }
 .hero-badge {
   display: inline-flex; align-items: center; gap: 8px; background: var(--surface);
@@ -183,7 +183,7 @@ input, select, textarea { font-family: inherit; }
 .trust-strip span { display: flex; align-items: center; gap: 9px; }
 
 /* ---------- Section headings ---------- */
-.section { padding: 44px 0 16px; }
+.section { padding-top: 44px; padding-bottom: 16px; }
 .section-head {
   display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 24px; gap: 16px; flex-wrap: wrap;
 }
@@ -388,7 +388,7 @@ h2.section-title { font-family: var(--font-display); font-weight: 700; font-size
 
 /* ---------- Footer ---------- */
 .site-footer { background: var(--surface); border-top: 1px solid var(--border); margin-top: 24px; }
-.footer-grid { display: grid; grid-template-columns: 1.6fr 1fr 1fr; gap: 32px; padding: 48px 0; }
+.footer-grid { display: grid; grid-template-columns: 1.6fr 1fr 1fr; gap: 32px; padding-top: 48px; padding-bottom: 48px; }
 .footer-brand p { margin: 0; font-size: 14px; line-height: 1.55; color: var(--ink-faint); max-width: 280px; }
 .footer-col .heading { font-weight: 700; font-size: 14px; margin-bottom: 14px; }
 .footer-col a { display: block; cursor: pointer; font-size: 14px; color: var(--ink-faint); margin-bottom: 10px; }
@@ -429,7 +429,7 @@ h2.section-title { font-family: var(--font-display); font-weight: 700; font-size
 }
 
 @media (max-width: 640px) {
-  .container { padding: 0 50px; }
+  .container { padding: 0 20px; }
 
   /* Header: empilha busca abaixo da linha marca/ações e esconde o menu central */
   .site-header .container { flex-wrap: wrap; gap: 10px 14px; padding-top: 12px; padding-bottom: 12px; }
@@ -437,7 +437,7 @@ h2.section-title { font-family: var(--font-display); font-weight: 700; font-size
   .header-search { order: 3; flex: 1 1 100%; max-width: none; margin: 0; }
   .header-actions { margin-left: auto; }
 
-  .hero { padding: 32px 0 24px; gap: 24px; }
+  .hero { padding-top: 32px; padding-bottom: 24px; gap: 24px; }
   .hero-badge { font-size: 12px; padding: 5px 12px; }
   .hero h1 { font-size: 32px; }
   .hero p.lead { font-size: 15.5px; max-width: none; }
@@ -447,7 +447,7 @@ h2.section-title { font-family: var(--font-display); font-weight: 700; font-size
 
   .trust-strip { justify-content: flex-start; gap: 10px 22px; font-size: 12.5px; }
 
-  .section { padding: 28px 0 10px; }
+  .section { padding-top: 28px; padding-bottom: 10px; }
   .section-head { align-items: flex-start; }
   h2.section-title { font-size: 21px; }
 
@@ -464,7 +464,7 @@ h2.section-title { font-family: var(--font-display); font-weight: 700; font-size
   .cta-banner h2 { font-size: 22px; }
   .cta-banner .btn { width: 100%; text-align: center; }
 
-  .footer-grid { grid-template-columns: 1fr; gap: 28px; padding: 36px 0; }
+  .footer-grid { grid-template-columns: 1fr; gap: 28px; padding-top: 36px; padding-bottom: 36px; }
   .footer-bottom .container { flex-direction: column; align-items: flex-start; gap: 6px; }
 
   .store-cover { height: 140px; border-radius: 18px; }
