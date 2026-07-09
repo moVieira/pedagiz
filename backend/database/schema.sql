@@ -43,7 +43,7 @@ CREATE TABLE products (
   description TEXT,
   price DECIMAL(10,2) NOT NULL,
   category_id INT,
-  file_type ENUM('PDF', 'CANVA', 'PPT', 'BUNDLE') NOT NULL DEFAULT 'PDF',
+  file_type ENUM('PDF', 'PPT', 'BUNDLE') NOT NULL DEFAULT 'PDF',
   cover_image VARCHAR(255),
   file_path VARCHAR(255) NOT NULL,
   active TINYINT(1) NOT NULL DEFAULT 1,
@@ -124,5 +124,4 @@ INSERT INTO categories (name, slug, tint) VALUES
   ('Matemática', 'matematica', '#D2E2EC'),
   ('Decoração de Sala', 'decoracao-de-sala', '#E5DCF0'),
   ('Datas Comemorativas', 'datas-comemorativas', '#F4E7C3'),
-  ('Atividades PDF', 'atividades-pdf', '#D6E2CF'),
-  ('Templates Canva', 'templates-canva', '#D2E2EC');
+  ('Atividades PDF', 'atividades-pdf', '#D6E2CF');

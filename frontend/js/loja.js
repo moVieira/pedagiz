@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const tint = tintFor(creator.slug);
 
     root.innerHTML = `
-      <div class="breadcrumb"><a href="index.html">Início</a> &nbsp;›&nbsp; Criadores &nbsp;›&nbsp; <span>${escapeHtml(creator.store_name)}</span></div>
+      <div class="breadcrumb"><a href="index.html">Início</a> &nbsp;›&nbsp; <span>${escapeHtml(creator.store_name)}</span></div>
       <div class="store-cover ${tint}"></div>
       <div class="store-profile">
         <div class="store-id">

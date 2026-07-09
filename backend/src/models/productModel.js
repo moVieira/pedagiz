@@ -2,7 +2,7 @@ const db = require('../config/database');
 
 const BASE_SELECT = `
   SELECT p.id, p.title, p.slug, p.description, p.price, p.file_type, p.cover_image, p.created_at,
-         c.name AS category_name, c.slug AS category_slug,
+         p.category_id, c.name AS category_name, c.slug AS category_slug,
          cp.id AS creator_id, cp.store_name AS creator_name, cp.slug AS creator_slug,
          COALESCE(AVG(r.rating), 0) AS rating,
          COUNT(DISTINCT r.id) AS rating_count
@@ -54,4 +54,13 @@ async function create({ creatorId, title, slug, description, price, categoryId, 
   return result.insertId;
 }
 
-module.exports = { findAll, findBySlug, findById, create };
+async function update(id, { title, description, price, categoryId, fileType, coverImage, filePath }) {
+  await db.query(
+    `UPDATE products
+        SET title = ?, description = ?, price = ?, category_id = ?, file_type = ?, cover_image = ?, file_path = ?
+      WHERE id = ?`,
+    [title, description, price, categoryId, fileType, coverImage, filePath, id]
+  );
+}
+
+module.exports = { findAll, findBySlug, findById, create, update };

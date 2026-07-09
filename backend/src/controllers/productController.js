@@ -31,10 +31,7 @@ async function getBySlug(req, res, next) {
 
 async function create(req, res, next) {
   try {
-    const creator = await creatorModel.findByUserId(req.user.id);
-    if (!creator) {
-      return res.status(403).json({ error: 'Você precisa abrir uma loja antes de publicar produtos' });
-    }
+    const creator = await creatorModel.ensureForUser(req.user.id, req.user.name);
 
     const file = req.files?.file?.[0];
     if (!file) {
@@ -60,4 +57,28 @@ async function create(req, res, next) {
   }
 }
 
-module.exports = { list, getBySlug, create };
+async function update(req, res, next) {
+  try {
+    const existing = await productModel.findById(req.params.id);
+    if (!existing) return res.status(404).json({ error: 'Produto não encontrado' });
+
+    const file = req.files?.file?.[0];
+    const cover = req.files?.cover?.[0];
+    const { title, description, price, categoryId, fileType } = req.body;
+
+    await productModel.update(req.params.id, {
+      title: title ?? existing.title,
+      description: description ?? existing.description,
+      price: price ?? existing.price,
+      categoryId: categoryId || null,
+      fileType: fileType || existing.file_type,
+      coverImage: cover ? `/uploads/${cover.filename}` : existing.cover_image,
+      filePath: file ? `uploads/${file.filename}` : existing.file_path
+    });
+    res.json({ ok: true });
+  } catch (err) {
+    next(err);
+  }
+}
+
+module.exports = { list, getBySlug, create, update };

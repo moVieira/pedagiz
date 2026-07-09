@@ -47,4 +47,26 @@ async function create({ userId, storeName, slug, bio, location, categoryLabel })
   return result.insertId;
 }
 
-module.exports = { findBySlug, findByUserId, findAllFeatured, create };
+/** Retorna o perfil de criador do usuário, criando um com valores padrão se ainda não existir. */
+async function ensureForUser(userId, defaultName) {
+  const existing = await findByUserId(userId);
+  if (existing) return existing;
+
+  const storeName = defaultName || 'Pedagix';
+  let stripped = '';
+  for (const ch of storeName.normalize('NFD')) {
+    const code = ch.codePointAt(0);
+    if (code >= 0x0300 && code <= 0x036f) continue;
+    stripped += ch;
+  }
+  const slug = stripped
+    .toLowerCase().trim()
+    .replace(/[^a-z0-9\s-]/g, '')
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-') || 'pedagix';
+
+  const id = await create({ userId, storeName, slug, bio: '', location: '', categoryLabel: '' });
+  return findByUserId(userId) || { id, user_id: userId, store_name: storeName, slug };
+}
+
+module.exports = { findBySlug, findByUserId, findAllFeatured, create, ensureForUser };

@@ -71,6 +71,7 @@ const Api = {
   },
   getProduct: (slug) => apiRequest(`/products/${encodeURIComponent(slug)}`),
   createProduct: (formData) => apiRequest('/products', { method: 'POST', body: formData, isForm: true, auth: true }),
+  updateProduct: (id, formData) => apiRequest(`/products/${id}`, { method: 'PUT', body: formData, isForm: true, auth: true }),
   reviewProduct: (productId, payload) => apiRequest(`/products/${productId}/reviews`, { method: 'POST', body: payload, auth: true }),
 
   listCategories: () => apiRequest('/categories'),

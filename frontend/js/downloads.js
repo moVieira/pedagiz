@@ -10,6 +10,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (nameEl) nameEl.textContent = user?.name || '';
   if (emailEl) emailEl.textContent = user?.email || '';
 
+  const adminLink = document.getElementById('account-admin-link');
+  if (adminLink && user?.role === 'admin') adminLink.style.display = '';
+
   const list = document.getElementById('downloads-list');
   const countEl = document.getElementById('downloads-count');
   if (!list) return;
