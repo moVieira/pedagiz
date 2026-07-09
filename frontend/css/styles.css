@@ -407,4 +407,57 @@ h2.section-title { font-family: var(--font-display); font-weight: 700; font-size
   .how-card { grid-template-columns: 1fr; }
   .account-layout, .checkout-layout { grid-template-columns: 1fr; }
   .footer-grid { grid-template-columns: 1fr 1fr; }
+  .product-detail { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 640px) {
+  .container { padding: 0 18px; }
+
+  /* Header: empilha busca abaixo da linha marca/ações e esconde o menu central */
+  .site-header .container { flex-wrap: wrap; gap: 10px 14px; padding-top: 12px; padding-bottom: 12px; }
+  .main-nav { display: none; }
+  .header-search { order: 3; flex: 1 1 100%; max-width: none; margin: 0; }
+  .header-actions { margin-left: auto; }
+
+  .hero { padding: 32px 0 24px; gap: 24px; }
+  .hero-badge { font-size: 12px; padding: 5px 12px; }
+  .hero h1 { font-size: 32px; }
+  .hero p.lead { font-size: 15.5px; max-width: none; }
+  .hero-search { flex-wrap: wrap; padding: 8px; }
+  .hero-search input { width: 100%; padding: 6px 4px; }
+  .hero-search button { width: 100%; }
+
+  .trust-strip { justify-content: flex-start; gap: 10px 22px; font-size: 12.5px; }
+
+  .section { padding: 28px 0 10px; }
+  .section-head { align-items: flex-start; }
+  h2.section-title { font-size: 21px; }
+
+  .category-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .product-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .product-title { min-height: 0; }
+
+  .how-card { padding: 26px 20px; gap: 24px; }
+
+  .testimonial { padding: 40px 20px 32px; }
+  .testimonial p { font-size: 19px; }
+
+  .cta-banner { padding: 28px 22px; border-radius: 20px; }
+  .cta-banner h2 { font-size: 22px; }
+  .cta-banner .btn { width: 100%; text-align: center; }
+
+  .footer-grid { grid-template-columns: 1fr; gap: 28px; padding: 36px 0; }
+  .footer-bottom .container { flex-direction: column; align-items: flex-start; gap: 6px; }
+
+  .store-cover { height: 140px; border-radius: 18px; }
+  .store-profile { margin-top: -32px; }
+  .store-logo { width: 80px; height: 80px; border-radius: 20px; font-size: 26px; }
+  .store-bio-row { grid-template-columns: 1fr; gap: 16px; }
+  .store-stats { gap: 24px; }
+
+  .product-detail-info h1 { font-size: 24px; }
+  .product-detail-actions { flex-wrap: wrap; gap: 12px; }
+
+  .download-row { flex-wrap: wrap; }
+  .download-actions { width: 100%; justify-content: flex-end; }
 }
