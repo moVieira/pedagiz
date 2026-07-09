@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   try {
     const { creator, products } = await Api.getCreator(slug);
-    document.title = `${creator.store_name} · Pastel & Giz`;
+    document.title = `${creator.store_name} · Pedagix`;
     const tint = tintFor(creator.slug);
 
     root.innerHTML = `
@@ -22,13 +22,13 @@ document.addEventListener('DOMContentLoaded', async () => {
           <div>
             <div class="store-name-row">
               <h1>${escapeHtml(creator.store_name)}</h1>
-              ${creator.verified ? '<span class="verified-badge">✓ Verificado</span>' : ''}
+              ${creator.verified ? '<span class="verified-badge"><span class="material-symbols-outlined" style="font-size:13px;">verified</span> Verificado</span>' : ''}
             </div>
             <div class="store-meta">${escapeHtml(creator.category_label || '')}${creator.location ? ' · ' + escapeHtml(creator.location) : ''}</div>
           </div>
         </div>
         <div class="store-actions">
-          <button class="btn btn-dark" id="follow-btn" type="button">＋ Seguir</button>
+          <button class="btn btn-dark" id="follow-btn" type="button"><span class="material-symbols-outlined" style="font-size:16px;">add</span> Seguir</button>
         </div>
       </div>
       <div class="store-bio-row">
@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         <div class="store-stats">
           <div><div class="stat-n">${creator.product_count}</div><div class="stat-l">materiais</div></div>
           <div><div class="stat-n">${creator.sales_count}</div><div class="stat-l">vendas</div></div>
-          <div><div class="stat-n">${formatRating(creator.rating)} ★</div><div class="stat-l">avaliação</div></div>
+          <div><div class="stat-n">${formatRating(creator.rating)} <span class="material-symbols-outlined filled" style="font-size:19px;">star</span></div><div class="stat-l">avaliação</div></div>
         </div>
       </div>
       <div class="product-grid" id="store-products" style="margin-top:28px;">
@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       if (!Auth.isLogged()) { window.location.href = 'login.html'; return; }
       try {
         await Api.follow(creator.id);
-        followBtn.textContent = '✓ Seguindo';
+        followBtn.innerHTML = '<span class="material-symbols-outlined" style="font-size:16px;">check</span> Seguindo';
       } catch (err) {
         console.error(err);
       }

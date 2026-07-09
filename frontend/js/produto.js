@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', async () => {
           <div class="product-creator">
             <div class="dot-avatar ${tintFor(product.creator_slug)}"></div>
             <a href="loja.html?slug=${encodeURIComponent(product.creator_slug)}">${escapeHtml(product.creator_name)}</a>
-            <span class="product-rating">★ ${formatRating(product.rating)} (${product.rating_count})</span>
+            <span class="product-rating"><span class="material-symbols-outlined filled" style="font-size:14px;">star</span> ${formatRating(product.rating)} (${product.rating_count})</span>
           </div>
           <p class="product-description">${escapeHtml(product.description || '')}</p>
           <div class="product-detail-actions">
@@ -79,7 +79,7 @@ function renderReviews(reviews) {
   if (!reviews.length) return '<p class="empty-state">Ainda não há avaliações para este material.</p>';
   return reviews.map((r) => `
     <div class="review-item">
-      <div class="review-head"><strong>${escapeHtml(r.user_name)}</strong><span>★ ${formatRating(r.rating)}</span></div>
+      <div class="review-head"><strong>${escapeHtml(r.user_name)}</strong><span><span class="material-symbols-outlined filled" style="font-size:14px;">star</span> ${formatRating(r.rating)}</span></div>
       <p>${escapeHtml(r.comment || '')}</p>
     </div>`).join('');
 }

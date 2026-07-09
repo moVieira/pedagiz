@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', async () => {
           <div class="download-tags"><span>${escapeHtml(d.file_type)}</span></div>
         </div>
         <div class="download-actions">
-          <button class="btn btn-dark" data-download="${d.download_token}" data-name="${escapeHtml(d.title)}" type="button">⬇ Baixar</button>
+          <button class="btn btn-dark" data-download="${d.download_token}" data-name="${escapeHtml(d.title)}" type="button"><span class="material-symbols-outlined" style="font-size:16px;">download</span> Baixar</button>
         </div>
       </div>`).join('') : '<p class="empty-state">Você ainda não comprou nenhum material.</p>';
 
@@ -46,7 +46,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 async function downloadFile(btn) {
-  const original = btn.textContent;
+  const original = btn.innerHTML;
   btn.disabled = true;
   btn.textContent = 'Baixando...';
   try {
@@ -67,6 +67,6 @@ async function downloadFile(btn) {
     alert(err.message);
   } finally {
     btn.disabled = false;
-    btn.textContent = original;
+    btn.innerHTML = original;
   }
 }

@@ -31,7 +31,7 @@ function renderProductCard(p) {
       <div class="product-cover ${cover ? '' : tint}">
         ${cover}
         <span class="product-type">${escapeHtml(p.file_type)}</span>
-        <button class="product-fav" data-fav="${p.id}" title="Favoritar" type="button">♡</button>
+        <button class="product-fav" data-fav="${p.id}" title="Favoritar" type="button"><span class="material-symbols-outlined" style="font-size:16px;">favorite</span></button>
       </div>
       <div class="product-body">
         <div class="product-cat">${escapeHtml(p.category_name || '')}</div>
@@ -39,7 +39,7 @@ function renderProductCard(p) {
         <div class="product-creator">
           <div class="dot-avatar ${tintFor(p.creator_slug)}"></div>
           <span>${escapeHtml(p.creator_name || '')}</span>
-          <span class="product-rating">★ ${formatRating(p.rating)}</span>
+          <span class="product-rating"><span class="material-symbols-outlined filled" style="font-size:13px;">star</span> ${formatRating(p.rating)}</span>
         </div>
         <div class="product-foot">
           <span class="product-price">${formatPrice(p.price)}</span>
@@ -65,7 +65,7 @@ function wireProductActions(scope) {
       });
       if (typeof initHeader === 'function') initHeader();
       const original = buyBtn.textContent;
-      buyBtn.textContent = 'Adicionado ✓';
+      buyBtn.innerHTML = 'Adicionado <span class="material-symbols-outlined" style="font-size:14px;">check</span>';
       setTimeout(() => { buyBtn.textContent = original; }, 1200);
       return;
     }
@@ -75,7 +75,7 @@ function wireProductActions(scope) {
       e.stopPropagation();
       if (!Auth.isLogged()) { window.location.href = 'login.html'; return; }
       Api.addFavorite(favBtn.dataset.fav)
-        .then(() => { favBtn.textContent = '♥'; })
+        .then(() => { favBtn.querySelector('.material-symbols-outlined')?.classList.add('filled'); })
         .catch((err) => console.error(err));
       return;
     }
