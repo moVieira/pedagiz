@@ -182,7 +182,7 @@ async function runCheckout(payload, btn, loadingText, idleText) {
   errorBox.classList.remove('show');
 
   if (!Auth.isLogged()) {
-    window.location.href = 'login.html?next=carrinho.html';
+    window.location.href = 'login?next=carrinho';
     return;
   }
 
@@ -235,14 +235,14 @@ async function renderPaymentResult(result, purchasedItems) {
         <p>Pedido #${result.orderId} criado.</p>
         ${result.boleto?.ticketUrl ? `<a class="btn btn-dark btn-block" href="${escapeHtml(result.boleto.ticketUrl)}" target="_blank" rel="noopener">Ver boleto</a>` : ''}
         <div class="barcode">${escapeHtml(result.boleto?.digitableLine || result.boleto?.barcodeContent || '')}</div>
-        <p>Assim que o pagamento for compensado, os materiais aparecem em <a href="downloads.html">Meus materiais</a>.</p>
+        <p>Assim que o pagamento for compensado, os materiais aparecem em <a href="downloads">Meus materiais</a>.</p>
       </div>`;
   } else {
     const approved = result.status === 'processed' || result.statusDetail === 'accredited';
     resultBox.innerHTML = `
       <div class="pix-box">
         <p><span class="material-symbols-outlined filled" style="font-size:20px;color:#4A6B5C;">check_circle</span> ${approved ? 'Pagamento aprovado!' : `Pagamento em análise (status: ${escapeHtml(result.status)}).`}</p>
-        <p>Pedido #${result.orderId}. ${approved ? 'Seus materiais já estão em' : 'Assim que aprovado, os materiais aparecem em'} <a href="downloads.html">Meus materiais</a>.</p>
+        <p>Pedido #${result.orderId}. ${approved ? 'Seus materiais já estão em' : 'Assim que aprovado, os materiais aparecem em'} <a href="downloads">Meus materiais</a>.</p>
         <div id="instant-downloads"></div>
       </div>`;
 
@@ -264,7 +264,7 @@ function pollPixPayment(orderId, purchasedItems) {
       if (order.status === 'pago') {
         clearInterval(interval);
         if (statusMsg) {
-          statusMsg.innerHTML = '<span class="material-symbols-outlined filled" style="font-size:18px;color:#4A6B5C;">check_circle</span> Pagamento confirmado! Seus materiais já estão em <a href="downloads.html">Meus materiais</a>.';
+          statusMsg.innerHTML = '<span class="material-symbols-outlined filled" style="font-size:18px;color:#4A6B5C;">check_circle</span> Pagamento confirmado! Seus materiais já estão em <a href="downloads">Meus materiais</a>.';
         }
         await renderInstantDownloads(purchasedItems);
       } else if (order.status === 'cancelado') {

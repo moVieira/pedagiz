@@ -22,7 +22,7 @@ app.use('/uploads', express.static(path.join(__dirname, '..', process.env.UPLOAD
 // Em produção o Express também serve o frontend estático (mesma origem, sem
 // CORS a configurar). Em dev local o frontend continua rodando à parte via
 // Live Server/npx serve, então isso só entra em uso quando implantado.
-app.use(express.static(path.join(__dirname, '..', '..', 'frontend')));
+app.use(express.static(path.join(__dirname, '..', '..', 'frontend'), { extensions: ['html'] }));
 
 app.get('/api/health', (req, res) => res.json({ ok: true }));
 

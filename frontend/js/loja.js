@@ -46,7 +46,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const followBtn = document.getElementById('follow-btn');
     followBtn.addEventListener('click', async () => {
-      if (!Auth.isLogged()) { window.location.href = 'login.html'; return; }
+      if (!Auth.isLogged()) { window.location.href = 'login'; return; }
       try {
         await Api.follow(creator.id);
         followBtn.innerHTML = '<span class="material-symbols-outlined" style="font-size:16px;">check</span> Seguindo';

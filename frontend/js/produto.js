@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     root.innerHTML = `
       <div class="breadcrumb">
         <a href="/">Início</a> &nbsp;›&nbsp;
-        <a href="loja.html?slug=${encodeURIComponent(product.creator_slug)}">${escapeHtml(product.creator_name)}</a> &nbsp;›&nbsp;
+        <a href="loja?slug=${encodeURIComponent(product.creator_slug)}">${escapeHtml(product.creator_name)}</a> &nbsp;›&nbsp;
         <span>${escapeHtml(product.title)}</span>
       </div>
       <div class="product-detail">
@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', async () => {
           <h1>${escapeHtml(product.title)}</h1>
           <div class="product-creator">
             <div class="dot-avatar ${tintFor(product.creator_slug)}"></div>
-            <a href="loja.html?slug=${encodeURIComponent(product.creator_slug)}">${escapeHtml(product.creator_name)}</a>
+            <a href="loja?slug=${encodeURIComponent(product.creator_slug)}">${escapeHtml(product.creator_name)}</a>
             <span class="product-rating"><span class="material-symbols-outlined filled" style="font-size:14px;">star</span> ${formatRating(product.rating)} (${product.rating_count})</span>
           </div>
           <p class="product-description">${escapeHtml(product.description || '')}</p>
@@ -52,7 +52,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         creator: product.creator_name, price: Number(product.price),
         cover: product.cover_image || null
       });
-      window.location.href = 'carrinho.html';
+      window.location.href = 'carrinho';
     });
 
     const form = document.getElementById('review-form');

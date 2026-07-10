@@ -52,7 +52,7 @@ function renderProductCard(p) {
     </div>`;
 }
 
-/** Baixa o arquivo de um item já comprado (usado em downloads.html e no pós-checkout). */
+/** Baixa o arquivo de um item já comprado (usado em downloads e no pós-checkout). */
 async function downloadFile(btn) {
   const original = btn.innerHTML;
   btn.disabled = true;
@@ -95,7 +95,7 @@ function wireProductActions(scope) {
         cover: card.dataset.cover || null
       });
       if (typeof initHeader === 'function') initHeader();
-      window.location.href = 'carrinho.html';
+      window.location.href = 'carrinho';
       return;
     }
 
@@ -121,7 +121,7 @@ function wireProductActions(scope) {
     const favBtn = e.target.closest('[data-fav]');
     if (favBtn) {
       e.stopPropagation();
-      if (!Auth.isLogged()) { window.location.href = 'login.html'; return; }
+      if (!Auth.isLogged()) { window.location.href = 'login'; return; }
       Api.addFavorite(favBtn.dataset.fav)
         .then(() => { favBtn.querySelector('.material-symbols-outlined')?.classList.add('filled'); })
         .catch((err) => console.error(err));
@@ -129,6 +129,6 @@ function wireProductActions(scope) {
     }
 
     const card = e.target.closest('.product-card');
-    if (card) window.location.href = `produto.html?slug=${encodeURIComponent(card.dataset.slug)}`;
+    if (card) window.location.href = `produto?slug=${encodeURIComponent(card.dataset.slug)}`;
   });
 }

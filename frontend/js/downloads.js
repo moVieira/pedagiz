@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', async () => {
   if (!Auth.isLogged()) {
-    window.location.href = 'login.html?next=downloads.html';
+    window.location.href = 'login?next=downloads';
     return;
   }
 

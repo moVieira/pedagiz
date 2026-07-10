@@ -16,18 +16,18 @@ function initHeader() {
       const initials = (user?.name || '?').trim().split(/\s+/).map((p) => p[0]).slice(0, 2).join('').toUpperCase();
       avatar.textContent = initials;
       avatar.title = user?.name || '';
-      avatar.onclick = () => { window.location.href = 'downloads.html'; };
+      avatar.onclick = () => { window.location.href = 'downloads'; };
     }
   } else {
     if (loginLink) {
       loginLink.style.display = '';
-      loginLink.onclick = () => { window.location.href = 'login.html'; };
+      loginLink.onclick = () => { window.location.href = 'login'; };
     }
     if (avatar) avatar.style.display = 'none';
   }
 
   const cartBtn = document.getElementById('header-cart-btn');
-  if (cartBtn) cartBtn.onclick = () => { window.location.href = 'carrinho.html'; };
+  if (cartBtn) cartBtn.onclick = () => { window.location.href = 'carrinho'; };
 
   const searchForm = document.getElementById('header-search-form');
   if (searchForm) {

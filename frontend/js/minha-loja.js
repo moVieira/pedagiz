@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', async () => {
   if (!Auth.isLogged()) {
-    window.location.href = 'login.html?next=minha-loja.html';
+    window.location.href = 'login?next=minha-loja';
     return;
   }
 
@@ -39,7 +39,7 @@ function slugify(text) {
 function renderPanel(root, creator) {
   root.innerHTML = `
     <h1 class="section-title" style="margin-bottom:6px;">Publicar materiais</h1>
-    <p style="color:#9A9085;margin:0 0 28px;">${creator ? `<a href="loja.html?slug=${encodeURIComponent(creator.slug)}">Ver loja pública →</a>` : 'Publique seu primeiro material abaixo.'}</p>
+    <p style="color:#9A9085;margin:0 0 28px;">${creator ? `<a href="loja?slug=${encodeURIComponent(creator.slug)}">Ver loja pública →</a>` : 'Publique seu primeiro material abaixo.'}</p>
 
     <p id="product-error" class="form-error"></p>
     <p id="product-success" class="form-success"></p>
