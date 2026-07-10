@@ -43,10 +43,40 @@ function renderProductCard(p) {
         </div>
         <div class="product-foot">
           <span class="product-price">${formatPrice(p.price)}</span>
-          <button class="btn btn-light" data-buy="true" type="button">Comprar</button>
+          <div class="product-actions">
+            <button class="icon-btn" data-add-cart="true" title="Adicionar ao carrinho" type="button"><span class="material-symbols-outlined" style="font-size:20px;">add_shopping_cart</span></button>
+            <button class="btn btn-light" data-buy="true" type="button">Comprar</button>
+          </div>
         </div>
       </div>
     </div>`;
+}
+
+/** Baixa o arquivo de um item já comprado (usado em downloads.html e no pós-checkout). */
+async function downloadFile(btn) {
+  const original = btn.innerHTML;
+  btn.disabled = true;
+  btn.textContent = 'Baixando...';
+  try {
+    const res = await fetch(`${API_BASE_URL}/downloads/${btn.dataset.download}/file`, {
+      headers: { Authorization: `Bearer ${Auth.getToken()}` }
+    });
+    if (!res.ok) throw new Error('Não foi possível baixar o arquivo.');
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = btn.dataset.name;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  } catch (err) {
+    alert(err.message);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = original;
+  }
 }
 
 /** Liga cliques em cards/botões de produto renderizados via renderProductCard. */
@@ -64,9 +94,25 @@ function wireProductActions(scope) {
         price: Number(card.dataset.price)
       });
       if (typeof initHeader === 'function') initHeader();
-      const original = buyBtn.textContent;
-      buyBtn.innerHTML = 'Adicionado <span class="material-symbols-outlined" style="font-size:14px;">check</span>';
-      setTimeout(() => { buyBtn.textContent = original; }, 1200);
+      window.location.href = 'carrinho.html';
+      return;
+    }
+
+    const addCartBtn = e.target.closest('[data-add-cart]');
+    if (addCartBtn) {
+      e.stopPropagation();
+      const card = addCartBtn.closest('.product-card');
+      Cart.add({
+        id: Number(card.dataset.id),
+        slug: card.dataset.slug,
+        title: card.dataset.title,
+        creator: card.dataset.creator,
+        price: Number(card.dataset.price)
+      });
+      if (typeof initHeader === 'function') initHeader();
+      const original = addCartBtn.innerHTML;
+      addCartBtn.innerHTML = '<span class="material-symbols-outlined" style="font-size:20px;">check</span>';
+      setTimeout(() => { addCartBtn.innerHTML = original; }, 1200);
       return;
     }
 

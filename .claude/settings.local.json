@@ -73,7 +73,11 @@
       "Bash(PYTHONIOENCODING=utf-8 python)",
       "Bash(node shots.js)",
       "Bash(curl -s -o /dev/null -w \"HTTP %{http_code}\\\\n\" https://pedagix-production.up.railway.app/uploads/1783633722118-4a8d2daa76a325fe.png)",
-      "Bash(curl -s https://pedagix-production.up.railway.app/css/styles.css)"
+      "Bash(curl -s https://pedagix-production.up.railway.app/css/styles.css)",
+      "Bash(curl -sI https://pedagix-production.up.railway.app/css/styles.css)",
+      "Bash(node --check frontend/js/carrinho.js)",
+      "Bash(node --check frontend/js/components.js)",
+      "Bash(node --check frontend/js/downloads.js)"
     ]
   }
 }

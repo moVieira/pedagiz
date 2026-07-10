@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     list.innerHTML = downloads.length ? downloads.map((d) => `
       <div class="download-row">
-        <div class="download-thumb ${tintFor(d.title)}"></div>
+        <div class="download-thumb ${d.cover_image ? '' : tintFor(d.title)}">${d.cover_image ? `<img src="${escapeHtml(mediaUrl(d.cover_image))}" alt="${escapeHtml(d.title)}">` : ''}</div>
         <div class="download-info">
           <div class="title">${escapeHtml(d.title)}</div>
           <div class="meta">por ${escapeHtml(d.creator_name)} · comprado em ${new Date(d.created_at).toLocaleDateString('pt-BR')}</div>
@@ -44,29 +44,3 @@ document.addEventListener('DOMContentLoaded', async () => {
     console.error(err);
   }
 });
-
-async function downloadFile(btn) {
-  const original = btn.innerHTML;
-  btn.disabled = true;
-  btn.textContent = 'Baixando...';
-  try {
-    const res = await fetch(`${API_BASE_URL}/downloads/${btn.dataset.download}/file`, {
-      headers: { Authorization: `Bearer ${Auth.getToken()}` }
-    });
-    if (!res.ok) throw new Error('Não foi possível baixar o arquivo.');
-    const blob = await res.blob();
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = btn.dataset.name;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    URL.revokeObjectURL(url);
-  } catch (err) {
-    alert(err.message);
-  } finally {
-    btn.disabled = false;
-    btn.innerHTML = original;
-  }
-}

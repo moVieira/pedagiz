@@ -3,6 +3,17 @@ let cardBrickController = null;
 
 document.addEventListener('DOMContentLoaded', renderCart);
 
+function copyPixCode(text, btn) {
+  const original = btn.innerHTML;
+  navigator.clipboard.writeText(text).then(() => {
+    btn.innerHTML = '<span class="material-symbols-outlined" style="font-size:16px;">check</span> Copiado!';
+    setTimeout(() => { btn.innerHTML = original; }, 1500);
+  }).catch((err) => {
+    console.error(err);
+    alert('Não foi possível copiar o código.');
+  });
+}
+
 function renderCart() {
   const list = document.getElementById('cart-list');
   const summary = document.getElementById('cart-summary');
@@ -181,11 +192,12 @@ async function runCheckout(payload, btn, loadingText, idleText) {
   }
 
   try {
-    payload.items = Cart.getItems().map((i) => ({ productId: i.id }));
+    const purchasedItems = Cart.getItems();
+    payload.items = purchasedItems.map((i) => ({ productId: i.id }));
     const result = await Api.checkout(payload);
     Cart.clear();
     initHeader();
-    renderPaymentResult(result);
+    renderPaymentResult(result, purchasedItems);
   } catch (err) {
     errorBox.textContent = err.message;
     errorBox.classList.add('show');
@@ -197,7 +209,7 @@ async function runCheckout(payload, btn, loadingText, idleText) {
   }
 }
 
-function renderPaymentResult(result) {
+async function renderPaymentResult(result, purchasedItems) {
   document.querySelector('.payment-tabs').style.display = 'none';
   document.getElementById('payment-method-body').style.display = 'none';
 
@@ -208,8 +220,12 @@ function renderPaymentResult(result) {
       <div class="pix-box">
         ${result.pix.qrCodeBase64 ? `<img src="data:image/png;base64,${result.pix.qrCodeBase64}" alt="QR Code Pix" width="220" height="220">` : ''}
         <div class="pix-code">${escapeHtml(result.pix.qrCode || 'Código Pix indisponível')}</div>
+        ${result.pix.qrCode ? '<button class="btn btn-outline btn-block" id="copy-pix-btn" type="button"><span class="material-symbols-outlined" style="font-size:16px;">content_copy</span> Copiar código</button>' : ''}
         <p>Pedido #${result.orderId} criado. Assim que o pagamento for confirmado, os materiais aparecem em <a href="downloads.html">Meus materiais</a>.</p>
       </div>`;
+
+    const copyBtn = document.getElementById('copy-pix-btn');
+    if (copyBtn) copyBtn.addEventListener('click', () => copyPixCode(result.pix.qrCode, copyBtn));
   } else if (result.method === 'boleto') {
     resultBox.innerHTML = `
       <div class="boleto-box">
@@ -222,8 +238,40 @@ function renderPaymentResult(result) {
     const approved = result.status === 'processed' || result.statusDetail === 'accredited';
     resultBox.innerHTML = `
       <div class="pix-box">
-        <p>${approved ? '✅ Pagamento aprovado!' : `Pagamento em análise (status: ${escapeHtml(result.status)}).`}</p>
+        <p><span class="material-symbols-outlined filled" style="font-size:20px;color:#4A6B5C;">check_circle</span> ${approved ? 'Pagamento aprovado!' : `Pagamento em análise (status: ${escapeHtml(result.status)}).`}</p>
         <p>Pedido #${result.orderId}. ${approved ? 'Seus materiais já estão em' : 'Assim que aprovado, os materiais aparecem em'} <a href="downloads.html">Meus materiais</a>.</p>
+        <div id="instant-downloads"></div>
       </div>`;
+
+    if (approved) await renderInstantDownloads(purchasedItems);
+  }
+}
+
+async function renderInstantDownloads(purchasedItems) {
+  const box = document.getElementById('instant-downloads');
+  if (!box) return;
+  try {
+    const { downloads } = await Api.myDownloads();
+    const purchasedIds = new Set((purchasedItems || []).map((i) => i.id));
+    const matches = downloads.filter((d) => purchasedIds.has(d.product_id));
+    if (!matches.length) return;
+
+    box.innerHTML = matches.map((d) => `
+      <div class="download-row" style="margin-top:14px;text-align:left;">
+        <div class="download-thumb ${d.cover_image ? '' : tintFor(d.title)}">${d.cover_image ? `<img src="${escapeHtml(mediaUrl(d.cover_image))}" alt="${escapeHtml(d.title)}">` : ''}</div>
+        <div class="download-info">
+          <div class="title">${escapeHtml(d.title)}</div>
+          <div class="download-tags"><span>${escapeHtml(d.file_type)}</span></div>
+        </div>
+        <div class="download-actions">
+          <button class="btn btn-dark" data-download="${d.download_token}" data-name="${escapeHtml(d.title)}" type="button"><span class="material-symbols-outlined" style="font-size:16px;">download</span> Baixar</button>
+        </div>
+      </div>`).join('');
+
+    box.querySelectorAll('[data-download]').forEach((btn) => {
+      btn.addEventListener('click', () => downloadFile(btn));
+    });
+  } catch (err) {
+    console.error(err);
   }
 }
