@@ -49,7 +49,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('buy-now').addEventListener('click', () => {
       Cart.add({
         id: product.id, slug: product.slug, title: product.title,
-        creator: product.creator_name, price: Number(product.price)
+        creator: product.creator_name, price: Number(product.price),
+        cover: product.cover_image || null
       });
       window.location.href = 'carrinho.html';
     });

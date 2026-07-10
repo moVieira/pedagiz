@@ -28,7 +28,7 @@ function renderCart() {
 
   list.innerHTML = items.map((i) => `
     <div class="cart-item">
-      <div class="cover ${tintFor(i.slug)}"></div>
+      <div class="cover ${i.cover ? '' : tintFor(i.slug)}">${i.cover ? `<img src="${escapeHtml(mediaUrl(i.cover))}" alt="${escapeHtml(i.title)}">` : ''}</div>
       <div class="info">
         <div class="title">${escapeHtml(i.title)}</div>
         <div class="creator">${escapeHtml(i.creator || '')}</div>

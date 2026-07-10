@@ -27,7 +27,7 @@ function renderProductCard(p) {
     ? `<img src="${escapeHtml(mediaUrl(p.cover_image))}" alt="${escapeHtml(p.title)}">`
     : '';
   return `
-    <div class="product-card" data-slug="${escapeHtml(p.slug)}" data-id="${p.id}" data-price="${p.price}" data-title="${escapeHtml(p.title)}" data-creator="${escapeHtml(p.creator_name || '')}">
+    <div class="product-card" data-slug="${escapeHtml(p.slug)}" data-id="${p.id}" data-price="${p.price}" data-title="${escapeHtml(p.title)}" data-creator="${escapeHtml(p.creator_name || '')}" data-cover="${escapeHtml(p.cover_image || '')}">
       <div class="product-cover ${cover ? '' : tint}">
         ${cover}
         <span class="product-type">${escapeHtml(p.file_type)}</span>
@@ -91,7 +91,8 @@ function wireProductActions(scope) {
         slug: card.dataset.slug,
         title: card.dataset.title,
         creator: card.dataset.creator,
-        price: Number(card.dataset.price)
+        price: Number(card.dataset.price),
+        cover: card.dataset.cover || null
       });
       if (typeof initHeader === 'function') initHeader();
       window.location.href = 'carrinho.html';
@@ -107,7 +108,8 @@ function wireProductActions(scope) {
         slug: card.dataset.slug,
         title: card.dataset.title,
         creator: card.dataset.creator,
-        price: Number(card.dataset.price)
+        price: Number(card.dataset.price),
+        cover: card.dataset.cover || null
       });
       if (typeof initHeader === 'function') initHeader();
       const original = addCartBtn.innerHTML;
