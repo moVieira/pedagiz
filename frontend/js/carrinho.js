@@ -21,7 +21,7 @@ function renderCart() {
 
   const items = Cart.getItems();
   if (!items.length) {
-    list.innerHTML = '<p class="empty-state">Seu carrinho está vazio. <a href="index.html">Explorar catálogo</a></p>';
+    list.innerHTML = '<p class="empty-state">Seu carrinho está vazio. <a href="/">Explorar catálogo</a></p>';
     summary.innerHTML = '';
     return;
   }

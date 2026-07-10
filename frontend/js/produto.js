@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     root.innerHTML = `
       <div class="breadcrumb">
-        <a href="index.html">Início</a> &nbsp;›&nbsp;
+        <a href="/">Início</a> &nbsp;›&nbsp;
         <a href="loja.html?slug=${encodeURIComponent(product.creator_slug)}">${escapeHtml(product.creator_name)}</a> &nbsp;›&nbsp;
         <span>${escapeHtml(product.title)}</span>
       </div>

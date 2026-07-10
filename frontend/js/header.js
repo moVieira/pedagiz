@@ -35,7 +35,7 @@ function initHeader() {
       e.preventDefault();
       const input = document.getElementById('header-search-input');
       const q = input ? input.value.trim() : '';
-      window.location.href = `index.html${q ? `?busca=${encodeURIComponent(q)}` : ''}`;
+      window.location.href = `/${q ? `?busca=${encodeURIComponent(q)}` : ''}`;
     });
   }
 }

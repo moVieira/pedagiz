@@ -15,13 +15,13 @@
 
 <header class="site-header">
   <div class="container">
-    <a class="brand" href="index.html">
+    <a class="brand" href="/">
       <div class="brand-mark"><span class="material-symbols-outlined">auto_awesome</span></div>
       <div class="brand-name">Pedagix</div>
     </a>
     <nav class="main-nav">
-      <a href="index.html" class="active">Início</a>
-      <a href="index.html">Catálogo</a>
+      <a href="/" class="active">Início</a>
+      <a href="/">Catálogo</a>
     </nav>
     <div class="header-search">
       <form id="header-search-form">
@@ -51,10 +51,10 @@
         <button class="btn btn-dark" type="submit">Buscar</button>
       </form>
       <div class="hero-chips">
-        <a class="chip" href="index.html?categoria=alfabetizacao">Alfabetização</a>
-        <a class="chip" href="index.html?categoria=datas-comemorativas">Festa Junina</a>
-        <a class="chip" href="index.html?categoria=matematica">Matemática lúdica</a>
-        <a class="chip" href="index.html">Volta às aulas</a>
+        <a class="chip" href="/?categoria=alfabetizacao">Alfabetização</a>
+        <a class="chip" href="/?categoria=datas-comemorativas">Festa Junina</a>
+        <a class="chip" href="/?categoria=matematica">Matemática lúdica</a>
+        <a class="chip" href="/">Volta às aulas</a>
       </div>
     </div>
     <div class="hero-art">
@@ -79,7 +79,7 @@
         <h2 class="section-title">Em destaque esta semana</h2>
         <p>Os favoritos da nossa comunidade de educadores</p>
       </div>
-      <a class="see-all" href="index.html">Ver tudo →</a>
+      <a class="see-all" href="/">Ver tudo →</a>
     </div>
     <div class="product-grid" id="featured-grid">
       <div class="empty-state">Carregando materiais…</div>
@@ -131,9 +131,9 @@
     </div>
     <div class="footer-col">
       <div class="heading">Explorar</div>
-      <a href="index.html?categoria=atividades-pdf">Atividades PDF</a>
-      <a href="index.html?categoria=decoracao-de-sala">Decoração de sala</a>
-      <a href="index.html?categoria=datas-comemorativas">Datas comemorativas</a>
+      <a href="/?categoria=atividades-pdf">Atividades PDF</a>
+      <a href="/?categoria=decoracao-de-sala">Decoração de sala</a>
+      <a href="/?categoria=datas-comemorativas">Datas comemorativas</a>
     </div>
     <div class="footer-col">
       <div class="heading">Suporte</div>
@@ -159,7 +159,7 @@
   document.getElementById('hero-search-form').addEventListener('submit', (e) => {
     e.preventDefault();
     const q = document.getElementById('hero-search-input').value.trim();
-    window.location.href = `index.html${q ? `?busca=${encodeURIComponent(q)}` : ''}`;
+    window.location.href = `/${q ? `?busca=${encodeURIComponent(q)}` : ''}`;
   });
 </script>
 </body>
