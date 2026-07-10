@@ -221,11 +221,14 @@ async function renderPaymentResult(result, purchasedItems) {
         ${result.pix.qrCodeBase64 ? `<img src="data:image/png;base64,${result.pix.qrCodeBase64}" alt="QR Code Pix" width="220" height="220">` : ''}
         <div class="pix-code">${escapeHtml(result.pix.qrCode || 'Código Pix indisponível')}</div>
         ${result.pix.qrCode ? '<button class="btn btn-outline btn-block" id="copy-pix-btn" type="button"><span class="material-symbols-outlined" style="font-size:16px;">content_copy</span> Copiar código</button>' : ''}
-        <p>Pedido #${result.orderId} criado. Assim que o pagamento for confirmado, os materiais aparecem em <a href="downloads.html">Meus materiais</a>.</p>
+        <p id="pix-status-msg">Pedido #${result.orderId} criado. Aguardando confirmação do pagamento…</p>
+        <div id="instant-downloads"></div>
       </div>`;
 
     const copyBtn = document.getElementById('copy-pix-btn');
     if (copyBtn) copyBtn.addEventListener('click', () => copyPixCode(result.pix.qrCode, copyBtn));
+
+    pollPixPayment(result.orderId, purchasedItems);
   } else if (result.method === 'boleto') {
     resultBox.innerHTML = `
       <div class="boleto-box">
@@ -245,6 +248,33 @@ async function renderPaymentResult(result, purchasedItems) {
 
     if (approved) await renderInstantDownloads(purchasedItems);
   }
+}
+
+function pollPixPayment(orderId, purchasedItems) {
+  let attempts = 0;
+  const maxAttempts = 90; // ~6 minutos, checando a cada 4s
+  const interval = setInterval(async () => {
+    attempts++;
+    if (attempts > maxAttempts) { clearInterval(interval); return; }
+
+    try {
+      const { order } = await Api.getOrder(orderId);
+      const statusMsg = document.getElementById('pix-status-msg');
+
+      if (order.status === 'pago') {
+        clearInterval(interval);
+        if (statusMsg) {
+          statusMsg.innerHTML = '<span class="material-symbols-outlined filled" style="font-size:18px;color:#4A6B5C;">check_circle</span> Pagamento confirmado! Seus materiais já estão em <a href="downloads.html">Meus materiais</a>.';
+        }
+        await renderInstantDownloads(purchasedItems);
+      } else if (order.status === 'cancelado') {
+        clearInterval(interval);
+        if (statusMsg) statusMsg.textContent = 'Este pedido foi cancelado.';
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  }, 4000);
 }
 
 async function renderInstantDownloads(purchasedItems) {
