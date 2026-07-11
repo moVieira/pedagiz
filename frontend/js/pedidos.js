@@ -26,9 +26,12 @@ document.addEventListener('DOMContentLoaded', async () => {
       countEl.textContent = `${orders.length} ${orders.length === 1 ? 'pedido' : 'pedidos'}`;
     }
 
-    list.innerHTML = orders.length ? orders.map((o) => `
+    list.innerHTML = orders.length ? orders.map((o) => {
+      const firstItem = o.items[0];
+      const cover = firstItem?.cover_image;
+      return `
       <div class="download-row">
-        <div class="download-thumb ${tintFor(String(o.id))}"></div>
+        <div class="download-thumb ${cover ? '' : tintFor(String(o.id))}">${cover ? `<img src="${escapeHtml(mediaUrl(cover))}" alt="${escapeHtml(firstItem.title)}">` : ''}</div>
         <div class="download-info">
           <div class="title">Pedido #${o.id} · ${escapeHtml(ORDER_METHOD_LABELS[o.payment_method] || o.payment_method)}</div>
           <div class="meta">${o.items.map((i) => escapeHtml(i.title)).join(', ') || 'Sem itens'} · ${new Date(o.created_at).toLocaleDateString('pt-BR')}</div>
@@ -37,7 +40,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         <div class="download-actions">
           <span class="product-price">${formatPrice(o.total)}</span>
         </div>
-      </div>`).join('') : '<p class="empty-state">Você ainda não fez nenhum pedido.</p>';
+      </div>`;
+    }).join('') : '<p class="empty-state">Você ainda não fez nenhum pedido.</p>';
   } catch (err) {
     list.innerHTML = '<p class="empty-state">Não foi possível carregar seus pedidos agora.</p>';
     console.error(err);
