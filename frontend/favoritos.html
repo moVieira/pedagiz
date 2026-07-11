@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Meus materiais · Pedagix</title>
+<title>Favoritos · Pedagix</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -49,18 +49,18 @@
         </div>
       </div>
       <nav class="account-menu">
-        <a class="active" href="downloads"><span class="material-symbols-outlined" style="font-size:18px;">download</span> Meus materiais</a>
+        <a href="downloads"><span class="material-symbols-outlined" style="font-size:18px;">download</span> Meus materiais</a>
         <a href="pedidos"><span class="material-symbols-outlined" style="font-size:18px;">inventory_2</span> Pedidos</a>
-        <a href="favoritos"><span class="material-symbols-outlined" style="font-size:18px;">favorite</span> Favoritos</a>
+        <a class="active" href="favoritos"><span class="material-symbols-outlined" style="font-size:18px;">favorite</span> Favoritos</a>
         <a href="minha-loja" id="account-admin-link" style="display:none;"><span class="material-symbols-outlined" style="font-size:18px;">storefront</span> Publicar materiais</a>
         <a href="#" id="logout-link"><span class="material-symbols-outlined" style="font-size:18px;">logout</span> Sair</a>
       </nav>
     </aside>
 
     <section>
-      <h1 style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:30px;letter-spacing:-0.02em;margin:0 0 4px;">Meus materiais</h1>
-      <p id="downloads-count" style="margin:0 0 26px;font-size:15px;color:#9A9085;">Carregando…</p>
-      <div style="display:flex;flex-direction:column;gap:14px;" id="downloads-list"></div>
+      <h1 style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:30px;letter-spacing:-0.02em;margin:0 0 4px;">Favoritos</h1>
+      <p id="favorites-count" style="margin:0 0 26px;font-size:15px;color:#9A9085;">Carregando…</p>
+      <div class="product-grid" id="favorites-grid"></div>
     </section>
   </div>
 </main>
@@ -99,7 +99,7 @@
 <script src="js/cart.js"></script>
 <script src="js/components.js"></script>
 <script src="js/header.js"></script>
-<script src="js/downloads.js"></script>
+<script src="js/favoritos.js"></script>
 <script>
   document.getElementById('logout-link').addEventListener('click', (e) => {
     e.preventDefault();

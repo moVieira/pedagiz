@@ -70,8 +70,19 @@ async function findByUser(userId) {
   return rows;
 }
 
+async function findItemsByOrder(orderId) {
+  const [rows] = await db.query(
+    `SELECT oi.product_id, oi.price, p.title, p.slug, p.cover_image
+     FROM order_items oi
+     JOIN products p ON p.id = oi.product_id
+     WHERE oi.order_id = ?`,
+    [orderId]
+  );
+  return rows;
+}
+
 async function cancelOrder(orderId) {
   await db.query('UPDATE orders SET status = ? WHERE id = ?', ['cancelado', orderId]);
 }
 
-module.exports = { createOrder, setPixCharge, findById, markAsPaid, findByUser, cancelOrder };
+module.exports = { createOrder, setPixCharge, findById, markAsPaid, findByUser, findItemsByOrder, cancelOrder };

@@ -122,8 +122,17 @@ function wireProductActions(scope) {
     if (favBtn) {
       e.stopPropagation();
       if (!Auth.isLogged()) { window.location.href = 'login'; return; }
-      Api.addFavorite(favBtn.dataset.fav)
-        .then(() => { favBtn.querySelector('.material-symbols-outlined')?.classList.add('filled'); })
+      const icon = favBtn.querySelector('.material-symbols-outlined');
+      const wasFavorited = icon?.classList.contains('filled');
+      const request = wasFavorited ? Api.removeFavorite(favBtn.dataset.fav) : Api.addFavorite(favBtn.dataset.fav);
+      request
+        .then(() => {
+          icon?.classList.toggle('filled', !wasFavorited);
+          favBtn.dispatchEvent(new CustomEvent('favorite-toggled', {
+            bubbles: true,
+            detail: { productId: favBtn.dataset.fav, favorited: !wasFavorited }
+          }));
+        })
         .catch((err) => console.error(err));
       return;
     }

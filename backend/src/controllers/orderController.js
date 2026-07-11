@@ -196,7 +196,10 @@ async function getOrder(req, res, next) {
 async function myOrders(req, res, next) {
   try {
     const orders = await orderModel.findByUser(req.user.id);
-    res.json({ orders });
+    const withItems = await Promise.all(
+      orders.map(async (order) => ({ ...order, items: await orderModel.findItemsByOrder(order.id) }))
+    );
+    res.json({ orders: withItems });
   } catch (err) {
     next(err);
   }
