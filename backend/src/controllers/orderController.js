@@ -138,6 +138,7 @@ async function checkout(req, res, next) {
       // O SDK do Mercado Pago não preenche err.message — o detalhe real
       // fica em err.errors[0].message, e pra recusa de pagamento o motivo
       // específico vem em err.errors[0].details[0] (ex: "PAY123: rejected_by_issuer").
+      console.error('[checkout] erro do Mercado Pago:', JSON.stringify(mpErr.errors || mpErr, null, 2));
       const apiError = mpErr.errors?.[0];
       const rejectionReason = apiError?.details?.[0]?.split(': ').pop();
       const normalized = new Error(
