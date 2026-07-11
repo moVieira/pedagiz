@@ -39,7 +39,23 @@ function slugify(text) {
 function renderPanel(root, creator) {
   root.innerHTML = `
     <h1 class="section-title" style="margin-bottom:6px;">Publicar materiais</h1>
-    <p style="color:#9A9085;margin:0 0 28px;">${creator ? `<a href="loja?slug=${encodeURIComponent(creator.slug)}">Ver loja pública →</a>` : 'Publique seu primeiro material abaixo.'}</p>
+    <p id="store-link-line" style="color:#9A9085;margin:0 0 28px;">${creator ? `<a href="loja?slug=${encodeURIComponent(creator.slug)}">Ver loja pública →</a>` : 'Publique seu primeiro material abaixo.'}</p>
+
+    ${creator ? `
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:22px;margin-bottom:36px;">
+      <h2 class="section-title" style="font-size:20px;margin-bottom:16px;">Dados da loja</h2>
+      <p id="store-error" class="form-error"></p>
+      <p id="store-success" class="form-success"></p>
+      <form id="store-form" style="max-width:520px;">
+        <div class="field"><label for="storeName">Nome da loja</label><input type="text" name="storeName" id="storeName" value="${escapeHtml(creator.store_name || '')}" required></div>
+        <div class="field"><label for="storeSlug">Endereço (slug)</label><input type="text" name="slug" id="storeSlug" value="${escapeHtml(creator.slug || '')}" required></div>
+        <div class="field"><label for="storeBio">Bio</label><textarea name="bio" id="storeBio" rows="3">${escapeHtml(creator.bio || '')}</textarea></div>
+        <div class="field"><label for="storeLocation">Localização</label><input type="text" name="location" id="storeLocation" value="${escapeHtml(creator.location || '')}"></div>
+        <div class="field"><label for="storeCategoryLabel">Categoria/área</label><input type="text" name="categoryLabel" id="storeCategoryLabel" value="${escapeHtml(creator.category_label || '')}"></div>
+        <div class="field"><label for="storeCover">Capa da loja (opcional)</label><input type="file" name="cover" id="storeCover" accept="image/*"></div>
+        <button class="btn btn-dark" type="submit">Salvar dados da loja</button>
+      </form>
+    </div>` : ''}
 
     <p id="product-error" class="form-error"></p>
     <p id="product-success" class="form-success"></p>
@@ -80,6 +96,38 @@ function renderPanel(root, creator) {
 
   if (creator) refreshMyProducts(creator.slug);
   else document.getElementById('my-products').innerHTML = '<p class="empty-state">Você ainda não publicou nenhum material.</p>';
+
+  const storeForm = document.getElementById('store-form');
+  if (storeForm) {
+    storeForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const errorBox = document.getElementById('store-error');
+      const successBox = document.getElementById('store-success');
+      errorBox.classList.remove('show');
+      successBox.classList.remove('show');
+
+      const fd = new FormData();
+      fd.append('storeName', storeForm.storeName.value.trim());
+      fd.append('slug', storeForm.slug.value.trim());
+      fd.append('bio', storeForm.bio.value.trim());
+      fd.append('location', storeForm.location.value.trim());
+      fd.append('categoryLabel', storeForm.categoryLabel.value.trim());
+      if (storeForm.cover.files[0]) fd.append('cover', storeForm.cover.files[0]);
+
+      try {
+        const { creator: updated } = await Api.updateStore(fd);
+        successBox.textContent = 'Dados da loja atualizados com sucesso!';
+        successBox.classList.add('show');
+        const linkLine = document.getElementById('store-link-line');
+        if (linkLine) linkLine.innerHTML = `<a href="loja?slug=${encodeURIComponent(updated.slug)}">Ver loja pública →</a>`;
+        storeForm.cover.value = '';
+        if (updated.slug) refreshMyProducts(updated.slug);
+      } catch (err) {
+        errorBox.textContent = err.message;
+        errorBox.classList.add('show');
+      }
+    });
+  }
 
   const form = document.getElementById('product-form');
   const fileInput = document.getElementById('file');

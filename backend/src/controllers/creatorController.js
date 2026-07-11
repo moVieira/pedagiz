@@ -49,6 +49,36 @@ async function create(req, res, next) {
   }
 }
 
+async function updateMe(req, res, next) {
+  try {
+    const creator = await creatorModel.findByUserId(req.user.id);
+    if (!creator) return res.status(404).json({ error: 'Você ainda não tem uma loja' });
+
+    const { storeName, slug, bio, location, categoryLabel } = req.body;
+
+    if (slug && slug !== creator.slug) {
+      const existing = await creatorModel.findBySlug(slug);
+      if (existing && existing.id !== creator.id) {
+        return res.status(409).json({ error: 'Esse endereço de loja já está em uso' });
+      }
+    }
+
+    const cover = req.file;
+    await creatorModel.update(creator.id, {
+      storeName: storeName || creator.store_name,
+      slug: slug || creator.slug,
+      bio: bio ?? creator.bio,
+      location: location ?? creator.location,
+      categoryLabel: categoryLabel ?? creator.category_label,
+      coverImage: cover ? `/uploads/${cover.filename}` : creator.cover_image
+    });
+
+    res.json({ creator: await creatorModel.findByUserId(req.user.id) });
+  } catch (err) {
+    next(err);
+  }
+}
+
 async function follow(req, res, next) {
   try {
     await followModel.follow(req.user.id, req.params.creatorId);
@@ -67,4 +97,4 @@ async function unfollow(req, res, next) {
   }
 }
 
-module.exports = { featured, getBySlug, me, create, follow, unfollow };
+module.exports = { featured, getBySlug, me, create, updateMe, follow, unfollow };

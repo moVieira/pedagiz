@@ -47,6 +47,15 @@ async function create({ userId, storeName, slug, bio, location, categoryLabel })
   return result.insertId;
 }
 
+async function update(id, { storeName, slug, bio, location, categoryLabel, coverImage }) {
+  await db.query(
+    `UPDATE creator_profiles
+        SET store_name = ?, slug = ?, bio = ?, location = ?, category_label = ?, cover_image = ?
+      WHERE id = ?`,
+    [storeName, slug, bio, location, categoryLabel, coverImage, id]
+  );
+}
+
 /** Retorna o perfil de criador do usuário, criando um com valores padrão se ainda não existir. */
 async function ensureForUser(userId, defaultName) {
   const existing = await findByUserId(userId);
@@ -69,4 +78,4 @@ async function ensureForUser(userId, defaultName) {
   return findByUserId(userId) || { id, user_id: userId, store_name: storeName, slug };
 }
 
-module.exports = { findBySlug, findByUserId, findAllFeatured, create, ensureForUser };
+module.exports = { findBySlug, findByUserId, findAllFeatured, create, update, ensureForUser };

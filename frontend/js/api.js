@@ -81,6 +81,7 @@ const Api = {
   getCreator: (slug) => apiRequest(`/creators/${encodeURIComponent(slug)}`),
   myStore: () => apiRequest('/creators/me', { auth: true }),
   createStore: (payload) => apiRequest('/creators', { method: 'POST', body: payload, auth: true }),
+  updateStore: (formData) => apiRequest('/creators/me', { method: 'PUT', body: formData, isForm: true, auth: true }),
   follow: (creatorId) => apiRequest(`/creators/${creatorId}/follow`, { method: 'POST', auth: true }),
   unfollow: (creatorId) => apiRequest(`/creators/${creatorId}/follow`, { method: 'DELETE', auth: true }),
 

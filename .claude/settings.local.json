@@ -77,7 +77,8 @@
       "Bash(curl -sI https://pedagix-production.up.railway.app/css/styles.css)",
       "Bash(node --check frontend/js/carrinho.js)",
       "Bash(node --check frontend/js/components.js)",
-      "Bash(node --check frontend/js/downloads.js)"
+      "Bash(node --check frontend/js/downloads.js)",
+      "Bash(node -e \"require\\('./backend/src/app'\\); console.log\\('app ok'\\)\")"
     ]
   }
 }
