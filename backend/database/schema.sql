@@ -90,7 +90,7 @@ CREATE TABLE orders (
   user_id INT NOT NULL,
   total DECIMAL(10,2) NOT NULL,
   status ENUM('pendente', 'pago', 'cancelado') NOT NULL DEFAULT 'pendente',
-  payment_method ENUM('pix', 'credito', 'debito', 'boleto') NOT NULL DEFAULT 'pix',
+  payment_method ENUM('pix', 'credito', 'debito', 'boleto', 'gratis') NOT NULL DEFAULT 'pix',
   mp_payment_id VARCHAR(64),
   pix_qr_code TEXT,
   pix_qr_code_base64 LONGTEXT,

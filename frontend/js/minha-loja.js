@@ -64,6 +64,10 @@ function renderPanel(root, creator) {
       <div class="field"><label for="title">Título</label><input type="text" name="title" id="title" required></div>
       <div class="field"><label for="description">Descrição</label><textarea name="description" id="description" rows="3"></textarea></div>
       <div class="field"><label for="price">Preço (R$)</label><input type="number" name="price" id="price" min="0" step="0.01" required></div>
+      <div class="field" style="display:flex;align-items:center;gap:8px;">
+        <input type="checkbox" id="isFree" style="width:auto;">
+        <label for="isFree" style="margin:0;">Material gratuito (entrega só pedindo o e-mail, sem passar pelo checkout)</label>
+      </div>
       <div class="field"><label for="categoryId">Categoria</label><select name="categoryId" id="categoryId"></select></div>
       <div class="field"><label for="fileType">Tipo de arquivo</label>
         <select name="fileType" id="fileType">
@@ -134,12 +138,23 @@ function renderPanel(root, creator) {
   const fileLabel = document.getElementById('file-label');
   const submitBtn = document.getElementById('submit-btn');
   const cancelBtn = document.getElementById('cancel-edit-btn');
+  const priceInput = document.getElementById('price');
+  const isFreeInput = document.getElementById('isFree');
+
+  function applyFreeState(isFree) {
+    isFreeInput.checked = isFree;
+    priceInput.disabled = isFree;
+    priceInput.value = isFree ? '0' : (priceInput.value === '0' ? '' : priceInput.value);
+  }
+
+  isFreeInput.addEventListener('change', () => applyFreeState(isFreeInput.checked));
 
   function enterEditMode(product) {
     form.productId.value = product.id;
     form.title.value = product.title;
     form.description.value = product.description || '';
     form.price.value = product.price;
+    applyFreeState(Number(product.price) === 0);
     form.categoryId.value = product.category_id || '';
     form.fileType.value = product.file_type;
     fileInput.required = false;
@@ -152,6 +167,7 @@ function renderPanel(root, creator) {
   function exitEditMode() {
     form.reset();
     form.productId.value = '';
+    applyFreeState(false);
     fileInput.required = true;
     fileLabel.textContent = 'Arquivo do material';
     submitBtn.textContent = 'Publicar';

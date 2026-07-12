@@ -1,5 +1,5 @@
 const ORDER_STATUS_LABELS = { pendente: 'Aguardando pagamento', pago: 'Pago', cancelado: 'Cancelado' };
-const ORDER_METHOD_LABELS = { pix: 'Pix', credito: 'Cartão de crédito', debito: 'Cartão de débito', boleto: 'Boleto' };
+const ORDER_METHOD_LABELS = { pix: 'Pix', credito: 'Cartão de crédito', debito: 'Cartão de débito', boleto: 'Boleto', gratis: 'Grátis' };
 
 document.addEventListener('DOMContentLoaded', async () => {
   if (!Auth.isLogged()) {

@@ -31,6 +31,7 @@ function downloadFilename(title, ext) {
 
 function renderProductCard(p) {
   const tint = tintFor(p.slug || p.title);
+  const isFree = Number(p.price) === 0;
   const cover = p.cover_image
     ? `<img src="${escapeHtml(mediaUrl(p.cover_image))}" alt="${escapeHtml(p.title)}">`
     : '';
@@ -50,10 +51,12 @@ function renderProductCard(p) {
           <span class="product-rating"><span class="material-symbols-outlined filled" style="font-size:13px;">star</span> ${formatRating(p.rating)}</span>
         </div>
         <div class="product-foot">
-          <span class="product-price">${formatPrice(p.price)}</span>
+          <span class="product-price">${isFree ? 'Grátis' : formatPrice(p.price)}</span>
           <div class="product-actions">
-            <button class="icon-btn" data-add-cart="true" title="Adicionar ao carrinho" type="button"><span class="material-symbols-outlined" style="font-size:20px;">add_shopping_cart</span></button>
-            <button class="btn btn-light" data-buy="true" type="button">Comprar</button>
+            ${isFree
+              ? `<button class="btn btn-light" data-view="true" type="button">Baixar grátis</button>`
+              : `<button class="icon-btn" data-add-cart="true" title="Adicionar ao carrinho" type="button"><span class="material-symbols-outlined" style="font-size:20px;">add_shopping_cart</span></button>
+                 <button class="btn btn-light" data-buy="true" type="button">Comprar</button>`}
           </div>
         </div>
       </div>
@@ -123,6 +126,14 @@ function wireProductActions(scope) {
       const original = addCartBtn.innerHTML;
       addCartBtn.innerHTML = '<span class="material-symbols-outlined" style="font-size:20px;">check</span>';
       setTimeout(() => { addCartBtn.innerHTML = original; }, 1200);
+      return;
+    }
+
+    const viewBtn = e.target.closest('[data-view]');
+    if (viewBtn) {
+      e.stopPropagation();
+      const card = viewBtn.closest('.product-card');
+      window.location.href = `produto?slug=${encodeURIComponent(card.dataset.slug)}`;
       return;
     }
 

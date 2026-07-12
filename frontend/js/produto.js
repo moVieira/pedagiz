@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const { product, reviews } = await Api.getProduct(slug);
     document.title = `${product.title} · Pedagiz`;
     const tint = tintFor(product.slug);
+    const isFree = Number(product.price) === 0;
 
     root.innerHTML = `
       <div class="breadcrumb">
@@ -33,10 +34,19 @@ document.addEventListener('DOMContentLoaded', async () => {
             <span class="product-rating"><span class="material-symbols-outlined filled" style="font-size:14px;">star</span> ${formatRating(product.rating)} (${product.rating_count})</span>
           </div>
           <p class="product-description">${escapeHtml(product.description || '')}</p>
+          ${isFree ? `
+          <div class="product-detail-actions" style="flex-direction:column;align-items:stretch;gap:12px;">
+            <span class="product-price">Grátis</span>
+            <form id="free-claim-form" style="display:flex;gap:10px;flex-wrap:wrap;">
+              <input type="email" id="free-claim-email" placeholder="Seu melhor e-mail" required style="flex:1;min-width:200px;border:1px solid var(--border);border-radius:11px;padding:12px 14px;font-size:15px;color:var(--ink);background:var(--surface);">
+              <button class="btn btn-dark" type="submit">Baixar grátis</button>
+            </form>
+            <p id="free-claim-message" style="font-size:13.5px;margin:0;"></p>
+          </div>` : `
           <div class="product-detail-actions">
             <span class="product-price">${formatPrice(product.price)}</span>
             <button class="btn btn-dark" id="buy-now" type="button">Comprar agora</button>
-          </div>
+          </div>`}
         </div>
       </div>
       <section class="reviews-section">
@@ -46,14 +56,45 @@ document.addEventListener('DOMContentLoaded', async () => {
       </section>
     `;
 
-    document.getElementById('buy-now').addEventListener('click', () => {
-      Cart.add({
-        id: product.id, slug: product.slug, title: product.title,
-        creator: product.creator_name, price: Number(product.price),
-        cover: product.cover_image || null
+    const buyBtn = document.getElementById('buy-now');
+    if (buyBtn) {
+      buyBtn.addEventListener('click', () => {
+        Cart.add({
+          id: product.id, slug: product.slug, title: product.title,
+          creator: product.creator_name, price: Number(product.price),
+          cover: product.cover_image || null
+        });
+        window.location.href = 'carrinho';
       });
-      window.location.href = 'carrinho';
-    });
+    }
+
+    const freeForm = document.getElementById('free-claim-form');
+    if (freeForm) {
+      freeForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const emailInput = document.getElementById('free-claim-email');
+        const msg = document.getElementById('free-claim-message');
+        const btn = freeForm.querySelector('button');
+        btn.disabled = true;
+        btn.textContent = 'Enviando...';
+        msg.textContent = '';
+        try {
+          const { message } = await Api.claimFreeProduct(product.id, {
+            email: emailInput.value.trim(),
+            name: Auth.getUser()?.name || ''
+          });
+          msg.textContent = message || 'Prontinho! Confira seu e-mail.';
+          msg.style.color = '#355044';
+          emailInput.disabled = true;
+          btn.textContent = 'Enviado!';
+        } catch (err) {
+          msg.textContent = err.message;
+          msg.style.color = '#A2392A';
+          btn.disabled = false;
+          btn.textContent = 'Baixar grátis';
+        }
+      });
+    }
 
     const form = document.getElementById('review-form');
     if (form) {

@@ -74,6 +74,7 @@ const Api = {
   updateProduct: (id, formData) => apiRequest(`/products/${id}`, { method: 'PUT', body: formData, isForm: true, auth: true }),
   deleteProduct: (id) => apiRequest(`/products/${id}`, { method: 'DELETE', auth: true }),
   reviewProduct: (productId, payload) => apiRequest(`/products/${productId}/reviews`, { method: 'POST', body: payload, auth: true }),
+  claimFreeProduct: (productId, payload) => apiRequest(`/products/${productId}/claim-free`, { method: 'POST', body: payload }),
 
   listCategories: () => apiRequest('/categories'),
 

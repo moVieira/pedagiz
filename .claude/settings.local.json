@@ -89,7 +89,16 @@
       "Bash(node --check ../frontend/js/carrinho.js)",
       "Bash(node -e ' *)",
       "Bash(node --check src/app.js)",
-      "Bash(node --check src/routes/authRoutes.js)"
+      "Bash(node --check src/routes/authRoutes.js)",
+      "Bash(node --check src/controllers/productController.js)",
+      "Bash(node --check src/routes/productRoutes.js)",
+      "Bash(node --check ../frontend/js/produto.js)",
+      "Bash(node --check ../frontend/js/minha-loja.js)",
+      "Bash(PORT=4327 node server.js)",
+      "Bash(curl -s -X POST http://localhost:4327/api/products/1/claim-free -H \"Content-Type: application/json\" -d '{}')",
+      "Bash(curl -s -X POST http://localhost:4327/api/products/1/claim-free -H \"Content-Type: application/json\" -d '{\"email\":\"nao-e-email\"}')",
+      "Bash(curl -s -o /dev/null -w \"/produto -> %{http_code}\\\\n\" http://localhost:4327/produto)",
+      "Bash(kill %1)"
     ]
   }
 }
