@@ -87,7 +87,9 @@
       "Bash(node --check ../frontend/js/components.js)",
       "Bash(node --check ../frontend/js/downloads.js)",
       "Bash(node --check ../frontend/js/carrinho.js)",
-      "Bash(node -e ' *)"
+      "Bash(node -e ' *)",
+      "Bash(node --check src/app.js)",
+      "Bash(node --check src/routes/authRoutes.js)"
     ]
   }
 }

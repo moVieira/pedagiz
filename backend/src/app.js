@@ -15,7 +15,31 @@ const paymentRoutes = require('./routes/paymentRoutes');
 
 const app = express();
 
-app.use(cors());
+// Necessário pra o rate limit (e req.ip) enxergarem o IP real do cliente
+// atrás do proxy da hospedagem (Railway/Render/etc.), que repassa via
+// X-Forwarded-For.
+app.set('trust proxy', 1);
+
+// Só libera CORS pras origens conhecidas do próprio site — sem isso,
+// qualquer site na internet conseguia chamar a API pelo navegador do
+// usuário. Requisições sem Origin (webhook do Mercado Pago, curl, apps
+// server-to-server) não são bloqueadas, já que CORS é uma restrição de
+// navegador, não de servidor.
+const allowedOrigins = [
+  process.env.FRONTEND_URL,
+  process.env.PUBLIC_API_URL,
+  'https://pedagiz.com',
+  'https://www.pedagiz.com'
+].filter(Boolean);
+
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) return callback(null, true);
+    const err = new Error('Não permitido pelo CORS');
+    err.status = 403;
+    callback(err);
+  }
+}));
 app.use(express.json());
 app.use('/uploads', express.static(path.join(__dirname, '..', process.env.UPLOAD_DIR || 'uploads')));
 
