@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   try {
     const { product, reviews } = await Api.getProduct(slug);
-    document.title = `${product.title} · Pedagix`;
+    document.title = `${product.title} · Pedagiz`;
     const tint = tintFor(product.slug);
 
     root.innerHTML = `

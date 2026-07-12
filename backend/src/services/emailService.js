@@ -13,9 +13,9 @@ function escapeHtml(str) {
 function parseMailFrom(value) {
   const match = /^(.*)<(.+)>$/.exec(value || '');
   if (match) {
-    return { name: match[1].trim().replace(/^"|"$/g, '') || 'Pedagix', email: match[2].trim() };
+    return { name: match[1].trim().replace(/^"|"$/g, '') || 'Pedagiz', email: match[2].trim() };
   }
-  return { name: 'Pedagix', email: value || 'no-reply@pedagiz.com' };
+  return { name: 'Pedagiz', email: value || 'no-reply@pedagiz.com' };
 }
 
 async function sendPurchaseEmail({ to, name, orderId, items }) {
@@ -52,7 +52,7 @@ async function sendPurchaseEmail({ to, name, orderId, items }) {
     body: JSON.stringify({
       sender: parseMailFrom(process.env.MAIL_FROM),
       to: [{ email: to, name }],
-      subject: `Seu material chegou! Pedido #${orderId} · Pedagix`,
+      subject: `Seu material chegou! Pedido #${orderId} · Pedagiz`,
       htmlContent: html
     })
   });

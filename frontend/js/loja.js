@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   try {
     const { creator, products } = await Api.getCreator(slug);
-    document.title = `${creator.store_name} · Pedagix`;
+    document.title = `${creator.store_name} · Pedagiz`;
     const tint = tintFor(creator.slug);
 
     root.innerHTML = `

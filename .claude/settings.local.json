@@ -80,7 +80,8 @@
       "Bash(node --check frontend/js/downloads.js)",
       "Bash(node -e \"require\\('./backend/src/app'\\); console.log\\('app ok'\\)\")",
       "Bash(node --check src/services/emailService.js)",
-      "Bash(node -e \"require\\('./src/app'\\); console.log\\('backend ok'\\)\")"
+      "Bash(node -e \"require\\('./src/app'\\); console.log\\('backend ok'\\)\")",
+      "Bash(node --check server.js)"
     ]
   }
 }

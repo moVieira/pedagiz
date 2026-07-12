@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   const user = Auth.getUser();
   if (user?.role !== 'admin') {
-    root.innerHTML = '<p class="empty-state">Esta área é restrita ao administrador da Pedagix.</p>';
+    root.innerHTML = '<p class="empty-state">Esta área é restrita ao administrador da Pedagiz.</p>';
     return;
   }
 

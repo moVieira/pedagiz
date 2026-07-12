@@ -1,4 +1,4 @@
--- Banco de dados do Pedagix
+-- Banco de dados do Pedagiz
 CREATE DATABASE IF NOT EXISTS pedagix
   CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
