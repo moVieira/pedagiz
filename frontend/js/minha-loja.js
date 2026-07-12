@@ -199,13 +199,29 @@ function renderPanel(root, creator) {
     }
   });
 
-  document.getElementById('my-products').addEventListener('click', (e) => {
+  document.getElementById('my-products').addEventListener('click', async (e) => {
     const editBtn = e.target.closest('[data-edit]');
-    if (!editBtn) return;
-    e.stopPropagation();
-    e.preventDefault();
-    const product = JSON.parse(editBtn.dataset.edit);
-    enterEditMode(product);
+    if (editBtn) {
+      e.stopPropagation();
+      e.preventDefault();
+      const product = JSON.parse(editBtn.dataset.edit);
+      enterEditMode(product);
+      return;
+    }
+
+    const deleteBtn = e.target.closest('[data-delete]');
+    if (deleteBtn) {
+      e.stopPropagation();
+      e.preventDefault();
+      const confirmed = confirm(`Excluir "${deleteBtn.dataset.title}"? Ele some da loja, mas quem já comprou continua com acesso ao material.`);
+      if (!confirmed) return;
+      try {
+        await Api.deleteProduct(deleteBtn.dataset.delete);
+        await refreshMyProducts(creator.slug);
+      } catch (err) {
+        alert(err.message);
+      }
+    }
   });
 }
 
@@ -238,7 +254,10 @@ function renderEditableProductCard(p) {
         <div class="product-title">${escapeHtml(p.title)}</div>
         <div class="product-foot">
           <span class="product-price">${formatPrice(p.price)}</span>
-          <button class="btn btn-light" data-edit='${escapeHtml(JSON.stringify(p))}' type="button">Editar</button>
+          <div class="product-actions">
+            <button class="btn btn-light" data-edit='${escapeHtml(JSON.stringify(p))}' type="button">Editar</button>
+            <button class="icon-btn" data-delete="${p.id}" data-title="${escapeHtml(p.title)}" title="Excluir" type="button"><span class="material-symbols-outlined" style="font-size:18px;">delete</span></button>
+          </div>
         </div>
       </div>
     </div>`;

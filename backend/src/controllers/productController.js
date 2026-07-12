@@ -81,4 +81,16 @@ async function update(req, res, next) {
   }
 }
 
-module.exports = { list, getBySlug, create, update };
+async function remove(req, res, next) {
+  try {
+    const existing = await productModel.findById(req.params.id);
+    if (!existing) return res.status(404).json({ error: 'Produto não encontrado' });
+
+    await productModel.remove(req.params.id);
+    res.status(204).send();
+  } catch (err) {
+    next(err);
+  }
+}
+
+module.exports = { list, getBySlug, create, update, remove };

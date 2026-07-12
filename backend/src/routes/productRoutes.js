@@ -20,6 +20,7 @@ router.put(
   upload.fields([{ name: 'file', maxCount: 1 }, { name: 'cover', maxCount: 1 }]),
   productController.update
 );
+router.delete('/:id', authRequired, adminRequired, productController.remove);
 router.post('/:productId/reviews', authRequired, reviewController.create);
 
 module.exports = router;
