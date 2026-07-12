@@ -1,3 +1,4 @@
+const path = require('path');
 const db = require('../config/database');
 
 async function findByUser(userId) {
@@ -6,7 +7,7 @@ async function findByUser(userId) {
   // o mais recente de cada produto é exibido, sem apagar o histórico.
   const [rows] = await db.query(
     `SELECT d.id, d.download_token, d.created_at,
-            p.id AS product_id, p.title, p.file_type, p.cover_image,
+            p.id AS product_id, p.title, p.file_type, p.cover_image, p.file_path,
             cp.store_name AS creator_name
      FROM downloads d
      JOIN products p ON p.id = d.product_id
@@ -16,7 +17,10 @@ async function findByUser(userId) {
      ORDER BY d.created_at DESC`,
     [userId]
   );
-  return rows;
+
+  // Não expõe o caminho interno do arquivo pro frontend — só a extensão,
+  // que é o necessário pra sugerir o nome certo na hora de baixar.
+  return rows.map(({ file_path, ...row }) => ({ ...row, file_ext: path.extname(file_path || '') }));
 }
 
 async function findByToken(token) {

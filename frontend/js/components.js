@@ -21,6 +21,14 @@ function escapeHtml(str) {
   }[c]));
 }
 
+// Título do produto não tem extensão (ex: "Calendário da Turma") — sem
+// isso no nome do arquivo baixado, o navegador/SO não reconhece que é PDF.
+function downloadFilename(title, ext) {
+  const safeTitle = title || 'material';
+  const safeExt = ext || '';
+  return safeTitle.toLowerCase().endsWith(safeExt.toLowerCase()) ? safeTitle : `${safeTitle}${safeExt}`;
+}
+
 function renderProductCard(p) {
   const tint = tintFor(p.slug || p.title);
   const cover = p.cover_image

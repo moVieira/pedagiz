@@ -10,6 +10,14 @@ async function myDownloads(req, res, next) {
   }
 }
 
+// O título do produto não tem extensão (ex: "Calendário da Turma") — sem
+// isso no nome sugerido pro download, o navegador/SO não reconhece o
+// arquivo como PDF. Usa a extensão de verdade do arquivo salvo no servidor.
+function downloadFilename(download) {
+  const ext = path.extname(download.file_path);
+  return download.title.toLowerCase().endsWith(ext.toLowerCase()) ? download.title : `${download.title}${ext}`;
+}
+
 async function getFile(req, res, next) {
   try {
     const download = await downloadModel.findByToken(req.params.token);
@@ -18,7 +26,7 @@ async function getFile(req, res, next) {
     }
 
     const filePath = path.join(__dirname, '..', '..', download.file_path);
-    res.download(filePath, download.title);
+    res.download(filePath, downloadFilename(download));
   } catch (err) {
     next(err);
   }
@@ -32,7 +40,7 @@ async function getPublicFile(req, res, next) {
     if (!download) return res.status(404).json({ error: 'Download não encontrado' });
 
     const filePath = path.join(__dirname, '..', '..', download.file_path);
-    res.download(filePath, download.title);
+    res.download(filePath, downloadFilename(download));
   } catch (err) {
     next(err);
   }
