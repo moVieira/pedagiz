@@ -4,6 +4,7 @@ const cors = require('cors');
 const path = require('path');
 
 const errorHandler = require('./middlewares/errorHandler');
+const seoRoutes = require('./routes/seoRoutes');
 const authRoutes = require('./routes/authRoutes');
 const productRoutes = require('./routes/productRoutes');
 const creatorRoutes = require('./routes/creatorRoutes');
@@ -42,6 +43,13 @@ app.use(cors({
 }));
 app.use(express.json());
 app.use('/uploads', express.static(path.join(__dirname, '..', process.env.UPLOAD_DIR || 'uploads')));
+
+// Precisa vir antes do express.static: preenche <title>/description/Open
+// Graph de cada produto e loja no próprio HTML retornado pelo servidor —
+// sem isso, rastreadores que não executam JavaScript (a maioria das
+// prévias de link do WhatsApp/Facebook, e nem sempre o Google) só veem o
+// título genérico do arquivo estático.
+app.use(seoRoutes);
 
 // Em produção o Express também serve o frontend estático (mesma origem, sem
 // CORS a configurar). Em dev local o frontend continua rodando à parte via
