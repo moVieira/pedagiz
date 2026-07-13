@@ -98,7 +98,10 @@
       "Bash(curl -s -X POST http://localhost:4327/api/products/1/claim-free -H \"Content-Type: application/json\" -d '{}')",
       "Bash(curl -s -X POST http://localhost:4327/api/products/1/claim-free -H \"Content-Type: application/json\" -d '{\"email\":\"nao-e-email\"}')",
       "Bash(curl -s -o /dev/null -w \"/produto -> %{http_code}\\\\n\" http://localhost:4327/produto)",
-      "Bash(kill %1)"
+      "Bash(kill %1)",
+      "Bash(curl -s https://pedagiz.com/api/products/teste-mri8yhq9)",
+      "Bash(curl -s https://pedagiz.com/js/produto.js)",
+      "Bash(curl -s -I https://pedagiz.com/js/produto.js)"
     ]
   }
 }
