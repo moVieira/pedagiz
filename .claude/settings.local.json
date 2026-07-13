@@ -121,7 +121,14 @@
       "Bash(curl -s http://localhost:4332/)",
       "Bash(PORT=4333 node server.js)",
       "Bash(curl -s -o /dev/null -w \"%{http_code} %{content_type} %{size_download} bytes\\\\n\" http://localhost:4333/assets/img/pedagiz-hires.png)",
-      "Bash(curl -s http://localhost:4333/)"
+      "Bash(curl -s http://localhost:4333/)",
+      "Bash(PORT=4334 node server.js)",
+      "Bash(curl -s http://localhost:4334/googlecc609d5f115393e1.html)",
+      "Read(//tmp/**)",
+      "Bash(PORT=4335 node server.js)",
+      "Bash(curl -s -i http://localhost:4335/googlecc609d5f115393e1.html)",
+      "Bash(PORT=4336 node server.js)",
+      "Bash(curl -s -i http://localhost:4336/googlecc609d5f115393e1.html)"
     ]
   }
 }
