@@ -23,7 +23,9 @@ function escapeAttr(str) {
 // já que o preenchimento via JavaScript não é visto por quem não executa
 // JS (rastreadores de redes sociais, e nem sempre o próprio Google).
 function injectMeta(template, { title, description, image, url }) {
-  let html = template.replace(/<title>.*?<\/title>/s, `<title>${escapeAttr(title)}</title>`);
+  // Função como substituto (em vez de string) evita que "$&", "$1" etc. no
+  // título/descrição sejam interpretados como padrões especiais do replace.
+  let html = template.replace(/<title>.*?<\/title>/s, () => `<title>${escapeAttr(title)}</title>`);
 
   const tags = [
     `<meta name="description" content="${escapeAttr(description)}">`,
@@ -37,7 +39,7 @@ function injectMeta(template, { title, description, image, url }) {
     `<meta name="twitter:card" content="${image ? 'summary_large_image' : 'summary'}">`
   ].filter(Boolean).join('\n');
 
-  return html.replace('</head>', `${tags}\n</head>`);
+  return html.replace('</head>', () => `${tags}\n</head>`);
 }
 
 module.exports = { templates, injectMeta, escapeAttr };

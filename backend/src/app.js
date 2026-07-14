@@ -21,6 +21,24 @@ const app = express();
 // X-Forwarded-For.
 app.set('trust proxy', 1);
 
+// Redireciona qualquer variação (http, www) pra versão canônica
+// (https://pedagiz.com) — evita conteúdo duplicado no Google e mantém uma
+// única URL "de verdade" pra cada página. Não mexe em ambiente local (só
+// atua quando o host já é algum *.pedagiz.com).
+app.use((req, res, next) => {
+  const host = req.headers.host || '';
+  if (!host.endsWith('pedagiz.com')) return next();
+
+  const isHttps = req.secure || req.headers['x-forwarded-proto'] === 'https';
+  const isWww = host === 'www.pedagiz.com';
+
+  if (!isHttps || isWww) {
+    const targetHost = isWww ? 'pedagiz.com' : host;
+    return res.redirect(301, `https://${targetHost}${req.originalUrl}`);
+  }
+  next();
+});
+
 // Só libera CORS pras origens conhecidas do próprio site — sem isso,
 // qualquer site na internet conseguia chamar a API pelo navegador do
 // usuário. Requisições sem Origin (webhook do Mercado Pago, curl, apps

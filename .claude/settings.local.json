@@ -128,7 +128,16 @@
       "Bash(PORT=4335 node server.js)",
       "Bash(curl -s -i http://localhost:4335/googlecc609d5f115393e1.html)",
       "Bash(PORT=4336 node server.js)",
-      "Bash(curl -s -i http://localhost:4336/googlecc609d5f115393e1.html)"
+      "Bash(curl -s -i http://localhost:4336/googlecc609d5f115393e1.html)",
+      "Bash(PORT=4337 node server.js)",
+      "Bash(curl -s -i -H \"Host: www.pedagiz.com\" http://localhost:4337/produto?slug=teste)",
+      "Bash(curl -s -i -H \"Host: pedagiz.com\" http://localhost:4337/)",
+      "Bash(curl -s -i -H \"Host: pedagiz.com\" -H \"X-Forwarded-Proto: https\" http://localhost:4337/)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" http://localhost:4337/)",
+      "Bash(curl -s -i https://pedagiz.com/sitemap.xml)",
+      "Bash(node --check src/middlewares/uploadMiddleware.js)",
+      "Bash(PORT=4338 node server.js)",
+      "Bash(curl -s http://localhost:4338/ads.txt)"
     ]
   }
 }
