@@ -137,7 +137,9 @@
       "Bash(curl -s -i https://pedagiz.com/sitemap.xml)",
       "Bash(node --check src/middlewares/uploadMiddleware.js)",
       "Bash(PORT=4338 node server.js)",
-      "Bash(curl -s http://localhost:4338/ads.txt)"
+      "Bash(curl -s http://localhost:4338/ads.txt)",
+      "Bash(curl -s https://pedagiz.com/api/creators/Pedagiz)",
+      "Bash(node --check ../frontend/js/loja.js)"
     ]
   }
 }

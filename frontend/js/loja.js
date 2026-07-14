@@ -18,7 +18,9 @@ document.addEventListener('DOMContentLoaded', async () => {
       <div class="store-cover ${creator.cover_image ? '' : tint}">${creator.cover_image ? `<img src="${escapeHtml(mediaUrl(creator.cover_image))}" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;">` : ''}</div>
       <div class="store-profile">
         <div class="store-id">
-          <div class="store-logo">${escapeHtml((creator.store_name || '?')[0])}</div>
+          <div class="store-logo">${creator.slug === 'Pedagiz'
+            ? `<img src="assets/img/pedagiz-transparent.png" alt="${escapeHtml(creator.store_name)}" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;display:block;">`
+            : escapeHtml((creator.store_name || '?')[0])}</div>
           <div>
             <div class="store-name-row">
               <h1>${escapeHtml(creator.store_name)}</h1>
