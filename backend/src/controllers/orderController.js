@@ -11,17 +11,17 @@ const PAYMENT_METHODS = ['pix', 'credito', 'debito', 'boleto'];
 // não mapeado cai na mensagem genérica da API mesmo.
 const REJECTION_MESSAGES = {
   rejected_by_issuer: 'Pagamento recusado pelo banco emissor do cartão. Tente outro cartão ou outro método de pagamento.',
-  cc_rejected_insufficient_amount: 'Cartão sem saldo/limite suficiente.',
-  cc_rejected_bad_filled_card_number: 'Número do cartão inválido.',
-  cc_rejected_bad_filled_date: 'Data de validade do cartão inválida.',
-  cc_rejected_bad_filled_security_code: 'Código de segurança (CVV) inválido.',
-  cc_rejected_bad_filled_other: 'Dados do cartão inválidos.',
-  cc_rejected_call_for_authorize: 'O banco exige que você autorize esse pagamento antes de tentar de novo.',
-  cc_rejected_card_disabled: 'Cartão desabilitado. Entre em contato com o banco emissor.',
-  cc_rejected_duplicated_payment: 'Já existe um pagamento igual a esse recente. Aguarde antes de tentar de novo.',
-  cc_rejected_high_risk: 'Pagamento recusado por segurança. Tente outro método de pagamento.',
-  cc_rejected_max_attempts: 'Número máximo de tentativas atingido. Tente outro cartão.',
-  cc_rejected_other_reason: 'Pagamento recusado pelo cartão. Tente outro cartão ou outro método de pagamento.'
+  insufficient_amount: 'Cartão sem saldo/limite suficiente.',
+  bad_filled_card_number: 'Número do cartão inválido.',
+  bad_filled_date: 'Data de validade do cartão inválida.',
+  bad_filled_security_code: 'Código de segurança (CVV) inválido.',
+  bad_filled_other: 'Dados do cartão inválidos.',
+  call_for_authorize: 'O banco exige que você autorize esse pagamento antes de tentar de novo.',
+  card_disabled: 'Cartão desabilitado. Entre em contato com o banco emissor.',
+  duplicated_payment: 'Já existe um pagamento igual a esse recente. Aguarde antes de tentar de novo.',
+  high_risk: 'Pagamento recusado por segurança. Tente outro método de pagamento.',
+  max_attempts: 'Número máximo de tentativas atingido. Tente outro cartão.',
+  other_reason: 'Pagamento recusado pelo cartão. Tente outro cartão ou outro método de pagamento.'
 };
 
 function splitName(fullName) {
@@ -138,8 +138,9 @@ async function checkout(req, res, next) {
       // O SDK do Mercado Pago não preenche err.message — o detalhe real
       // fica em err.errors[0].message, e pra recusa de pagamento o motivo
       // específico vem em err.errors[0].details[0] (ex: "PAY123: rejected_by_issuer").
+      console.error('[checkout] erro do Mercado Pago:', JSON.stringify(mpErr.errors || mpErr, null, 2));
       const apiError = mpErr.errors?.[0];
-      const rejectionReason = apiError?.details?.[0]?.split(': ').pop();
+      const rejectionReason = apiError?.details?.[0]?.split(': ').pop()?.replace(/^cc_rejected_/, '');
       const normalized = new Error(
         REJECTION_MESSAGES[rejectionReason] || apiError?.message || 'Não foi possível processar o pagamento no Mercado Pago'
       );
@@ -196,7 +197,10 @@ async function getOrder(req, res, next) {
 async function myOrders(req, res, next) {
   try {
     const orders = await orderModel.findByUser(req.user.id);
-    res.json({ orders });
+    const withItems = await Promise.all(
+      orders.map(async (order) => ({ ...order, items: await orderModel.findItemsByOrder(order.id) }))
+    );
+    res.json({ orders: withItems });
   } catch (err) {
     next(err);
   }

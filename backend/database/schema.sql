@@ -1,4 +1,4 @@
--- Banco de dados do Pedagix
+-- Banco de dados do Pedagiz
 CREATE DATABASE IF NOT EXISTS pedagix
   CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -52,6 +52,15 @@ CREATE TABLE products (
   FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE SET NULL
 );
 
+CREATE TABLE product_images (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  product_id INT NOT NULL,
+  image_path VARCHAR(255) NOT NULL,
+  sort_order INT NOT NULL DEFAULT 0,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
+);
+
 CREATE TABLE reviews (
   id INT AUTO_INCREMENT PRIMARY KEY,
   product_id INT NOT NULL,
@@ -90,7 +99,7 @@ CREATE TABLE orders (
   user_id INT NOT NULL,
   total DECIMAL(10,2) NOT NULL,
   status ENUM('pendente', 'pago', 'cancelado') NOT NULL DEFAULT 'pendente',
-  payment_method ENUM('pix', 'credito', 'debito', 'boleto') NOT NULL DEFAULT 'pix',
+  payment_method ENUM('pix', 'credito', 'debito', 'boleto', 'gratis') NOT NULL DEFAULT 'pix',
   mp_payment_id VARCHAR(64),
   pix_qr_code TEXT,
   pix_qr_code_base64 LONGTEXT,

@@ -5,7 +5,8 @@
 <link rel="icon" type="image/png" href="assets/img/pedagiz-transparent.png">
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8094508049851884" crossorigin="anonymous"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Loja do criador · Pedagiz</title>
+<title>Pedidos · Pedagiz</title>
+<meta name="robots" content="noindex, nofollow">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -40,9 +41,30 @@
   </div>
 </header>
 
-<main class="container" style="padding-top:24px;padding-bottom:64px;">
-  <div id="store-root">
-    <p class="empty-state">Carregando loja…</p>
+<main class="container">
+  <div class="account-layout">
+    <aside class="account-sidebar">
+      <div class="account-user-card">
+        <div class="avatar" style="background:linear-gradient(135deg,#D6E2CF,#D2E2EC);"><span class="material-symbols-outlined" style="font-size:18px;">person</span></div>
+        <div style="min-width:0;">
+          <div class="name" id="account-name">—</div>
+          <div class="email" id="account-email">—</div>
+        </div>
+      </div>
+      <nav class="account-menu">
+        <a href="downloads"><span class="material-symbols-outlined" style="font-size:18px;">download</span> Meus materiais</a>
+        <a class="active" href="pedidos"><span class="material-symbols-outlined" style="font-size:18px;">inventory_2</span> Pedidos</a>
+        <a href="favoritos"><span class="material-symbols-outlined" style="font-size:18px;">favorite</span> Favoritos</a>
+        <a href="minha-loja" id="account-admin-link" style="display:none;"><span class="material-symbols-outlined" style="font-size:18px;">storefront</span> Publicar materiais</a>
+        <a href="#" id="logout-link"><span class="material-symbols-outlined" style="font-size:18px;">logout</span> Sair</a>
+      </nav>
+    </aside>
+
+    <section>
+      <h1 style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:30px;letter-spacing:-0.02em;margin:0 0 4px;">Pedidos</h1>
+      <p id="orders-count" style="margin:0 0 26px;font-size:15px;color:#9A9085;">Carregando…</p>
+      <div style="display:flex;flex-direction:column;gap:14px;" id="orders-list"></div>
+    </section>
   </div>
 </main>
 
@@ -80,6 +102,13 @@
 <script src="js/cart.js"></script>
 <script src="js/components.js"></script>
 <script src="js/header.js"></script>
-<script src="js/loja.js"></script>
+<script src="js/pedidos.js"></script>
+<script>
+  document.getElementById('logout-link').addEventListener('click', (e) => {
+    e.preventDefault();
+    Auth.clearSession();
+    window.location.href = '/';
+  });
+</script>
 </body>
 </html>

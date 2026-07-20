@@ -47,12 +47,21 @@ async function create({ userId, storeName, slug, bio, location, categoryLabel })
   return result.insertId;
 }
 
+async function update(id, { storeName, slug, bio, location, categoryLabel, coverImage }) {
+  await db.query(
+    `UPDATE creator_profiles
+        SET store_name = ?, slug = ?, bio = ?, location = ?, category_label = ?, cover_image = ?
+      WHERE id = ?`,
+    [storeName, slug, bio, location, categoryLabel, coverImage, id]
+  );
+}
+
 /** Retorna o perfil de criador do usuário, criando um com valores padrão se ainda não existir. */
 async function ensureForUser(userId, defaultName) {
   const existing = await findByUserId(userId);
   if (existing) return existing;
 
-  const storeName = defaultName || 'Pedagix';
+  const storeName = defaultName || 'Pedagiz';
   let stripped = '';
   for (const ch of storeName.normalize('NFD')) {
     const code = ch.codePointAt(0);
@@ -63,10 +72,10 @@ async function ensureForUser(userId, defaultName) {
     .toLowerCase().trim()
     .replace(/[^a-z0-9\s-]/g, '')
     .replace(/\s+/g, '-')
-    .replace(/-+/g, '-') || 'pedagix';
+    .replace(/-+/g, '-') || 'pedagiz';
 
   const id = await create({ userId, storeName, slug, bio: '', location: '', categoryLabel: '' });
   return findByUserId(userId) || { id, user_id: userId, store_name: storeName, slug };
 }
 
-module.exports = { findBySlug, findByUserId, findAllFeatured, create, ensureForUser };
+module.exports = { findBySlug, findByUserId, findAllFeatured, create, update, ensureForUser };

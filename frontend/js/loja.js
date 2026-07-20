@@ -10,15 +10,17 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   try {
     const { creator, products } = await Api.getCreator(slug);
-    document.title = `${creator.store_name} · Pedagix`;
+    document.title = `${creator.store_name} · Pedagiz`;
     const tint = tintFor(creator.slug);
 
     root.innerHTML = `
-      <div class="breadcrumb"><a href="index.html">Início</a> &nbsp;›&nbsp; <span>${escapeHtml(creator.store_name)}</span></div>
-      <div class="store-cover ${tint}"></div>
+      <div class="breadcrumb"><a href="/">Início</a> &nbsp;›&nbsp; <span>${escapeHtml(creator.store_name)}</span></div>
+      <div class="store-cover ${creator.cover_image ? '' : tint}">${creator.cover_image ? `<img src="${escapeHtml(mediaUrl(creator.cover_image))}" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;">` : ''}</div>
       <div class="store-profile">
         <div class="store-id">
-          <div class="store-logo">${escapeHtml((creator.store_name || '?')[0])}</div>
+          <div class="store-logo">${creator.slug === 'Pedagiz'
+            ? `<img src="assets/img/pedagiz-transparent.png" alt="${escapeHtml(creator.store_name)}" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;display:block;">`
+            : escapeHtml((creator.store_name || '?')[0])}</div>
           <div>
             <div class="store-name-row">
               <h1>${escapeHtml(creator.store_name)}</h1>
@@ -46,7 +48,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const followBtn = document.getElementById('follow-btn');
     followBtn.addEventListener('click', async () => {
-      if (!Auth.isLogged()) { window.location.href = 'login.html'; return; }
+      if (!Auth.isLogged()) { window.location.href = 'login'; return; }
       try {
         await Api.follow(creator.id);
         followBtn.innerHTML = '<span class="material-symbols-outlined" style="font-size:16px;">check</span> Seguindo';

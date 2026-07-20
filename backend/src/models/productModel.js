@@ -63,4 +63,11 @@ async function update(id, { title, description, price, categoryId, fileType, cov
   );
 }
 
-module.exports = { findAll, findBySlug, findById, create, update };
+// Exclusão suave: some da loja e do catálogo (mesmo filtro `active = 1` já
+// usado em toda consulta pública), mas preserva pedidos e downloads de quem
+// já comprou — não dá pra apagar a linha de verdade sem quebrar isso.
+async function remove(id) {
+  await db.query('UPDATE products SET active = 0 WHERE id = ?', [id]);
+}
+
+module.exports = { findAll, findBySlug, findById, create, update, remove };

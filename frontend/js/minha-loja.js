@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', async () => {
   if (!Auth.isLogged()) {
-    window.location.href = 'login.html?next=minha-loja.html';
+    window.location.href = 'login?next=minha-loja';
     return;
   }
 
@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   const user = Auth.getUser();
   if (user?.role !== 'admin') {
-    root.innerHTML = '<p class="empty-state">Esta área é restrita ao administrador da Pedagix.</p>';
+    root.innerHTML = '<p class="empty-state">Esta área é restrita ao administrador da Pedagiz.</p>';
     return;
   }
 
@@ -39,7 +39,23 @@ function slugify(text) {
 function renderPanel(root, creator) {
   root.innerHTML = `
     <h1 class="section-title" style="margin-bottom:6px;">Publicar materiais</h1>
-    <p style="color:#9A9085;margin:0 0 28px;">${creator ? `<a href="loja.html?slug=${encodeURIComponent(creator.slug)}">Ver loja pública →</a>` : 'Publique seu primeiro material abaixo.'}</p>
+    <p id="store-link-line" style="color:#9A9085;margin:0 0 28px;">${creator ? `<a href="loja?slug=${encodeURIComponent(creator.slug)}">Ver loja pública →</a>` : 'Publique seu primeiro material abaixo.'}</p>
+
+    ${creator ? `
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:22px;margin-bottom:36px;">
+      <h2 class="section-title" style="font-size:20px;margin-bottom:16px;">Dados da loja</h2>
+      <p id="store-error" class="form-error"></p>
+      <p id="store-success" class="form-success"></p>
+      <form id="store-form" style="max-width:520px;">
+        <div class="field"><label for="storeName">Nome da loja</label><input type="text" name="storeName" id="storeName" value="${escapeHtml(creator.store_name || '')}" required></div>
+        <div class="field"><label for="storeSlug">Endereço (slug)</label><input type="text" name="slug" id="storeSlug" value="${escapeHtml(creator.slug || '')}" required></div>
+        <div class="field"><label for="storeBio">Bio</label><textarea name="bio" id="storeBio" rows="3">${escapeHtml(creator.bio || '')}</textarea></div>
+        <div class="field"><label for="storeLocation">Localização</label><input type="text" name="location" id="storeLocation" value="${escapeHtml(creator.location || '')}"></div>
+        <div class="field"><label for="storeCategoryLabel">Categoria/área</label><input type="text" name="categoryLabel" id="storeCategoryLabel" value="${escapeHtml(creator.category_label || '')}"></div>
+        <div class="field"><label for="storeCover">Capa da loja (opcional)</label><input type="file" name="cover" id="storeCover" accept="image/*"></div>
+        <button class="btn btn-dark" type="submit">Salvar dados da loja</button>
+      </form>
+    </div>` : ''}
 
     <p id="product-error" class="form-error"></p>
     <p id="product-success" class="form-success"></p>
@@ -48,6 +64,10 @@ function renderPanel(root, creator) {
       <div class="field"><label for="title">Título</label><input type="text" name="title" id="title" required></div>
       <div class="field"><label for="description">Descrição</label><textarea name="description" id="description" rows="3"></textarea></div>
       <div class="field"><label for="price">Preço (R$)</label><input type="number" name="price" id="price" min="0" step="0.01" required></div>
+      <div class="field" style="display:flex;align-items:center;gap:8px;">
+        <input type="checkbox" id="isFree" style="width:auto;">
+        <label for="isFree" style="margin:0;">Material gratuito (entrega só pedindo o e-mail, sem passar pelo checkout)</label>
+      </div>
       <div class="field"><label for="categoryId">Categoria</label><select name="categoryId" id="categoryId"></select></div>
       <div class="field"><label for="fileType">Tipo de arquivo</label>
         <select name="fileType" id="fileType">
@@ -58,6 +78,11 @@ function renderPanel(root, creator) {
       </div>
       <div class="field"><label for="file" id="file-label">Arquivo do material</label><input type="file" name="file" id="file"></div>
       <div class="field"><label for="cover">Capa (opcional)</label><input type="file" name="cover" id="cover" accept="image/*"></div>
+      <div class="field" id="existing-images-field" style="display:none;">
+        <label>Imagens já publicadas</label>
+        <div id="existing-images" style="display:flex;gap:8px;flex-wrap:wrap;"></div>
+      </div>
+      <div class="field"><label for="images">Mais fotos do produto (opcional, pode selecionar várias)</label><input type="file" name="images" id="images" accept="image/*" multiple></div>
       <div style="display:flex;gap:10px;">
         <button class="btn btn-dark" type="submit" id="submit-btn">Publicar</button>
         <button class="btn btn-outline" type="button" id="cancel-edit-btn" style="display:none;">Cancelar edição</button>
@@ -81,33 +106,114 @@ function renderPanel(root, creator) {
   if (creator) refreshMyProducts(creator.slug);
   else document.getElementById('my-products').innerHTML = '<p class="empty-state">Você ainda não publicou nenhum material.</p>';
 
+  const storeForm = document.getElementById('store-form');
+  if (storeForm) {
+    storeForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const errorBox = document.getElementById('store-error');
+      const successBox = document.getElementById('store-success');
+      errorBox.classList.remove('show');
+      successBox.classList.remove('show');
+
+      const fd = new FormData();
+      fd.append('storeName', storeForm.storeName.value.trim());
+      fd.append('slug', storeForm.slug.value.trim());
+      fd.append('bio', storeForm.bio.value.trim());
+      fd.append('location', storeForm.location.value.trim());
+      fd.append('categoryLabel', storeForm.categoryLabel.value.trim());
+      if (storeForm.cover.files[0]) fd.append('cover', storeForm.cover.files[0]);
+
+      try {
+        const { creator: updated } = await Api.updateStore(fd);
+        successBox.textContent = 'Dados da loja atualizados com sucesso!';
+        successBox.classList.add('show');
+        const linkLine = document.getElementById('store-link-line');
+        if (linkLine) linkLine.innerHTML = `<a href="loja?slug=${encodeURIComponent(updated.slug)}">Ver loja pública →</a>`;
+        storeForm.cover.value = '';
+        if (updated.slug) refreshMyProducts(updated.slug);
+      } catch (err) {
+        errorBox.textContent = err.message;
+        errorBox.classList.add('show');
+      }
+    });
+  }
+
   const form = document.getElementById('product-form');
   const fileInput = document.getElementById('file');
   const fileLabel = document.getElementById('file-label');
+  const imagesInput = document.getElementById('images');
+  const existingImagesField = document.getElementById('existing-images-field');
+  const existingImagesBox = document.getElementById('existing-images');
   const submitBtn = document.getElementById('submit-btn');
   const cancelBtn = document.getElementById('cancel-edit-btn');
+  const priceInput = document.getElementById('price');
+  const isFreeInput = document.getElementById('isFree');
+
+  async function loadExistingImages(productId, slug) {
+    existingImagesField.style.display = 'none';
+    existingImagesBox.innerHTML = '';
+    try {
+      const { product } = await Api.getProduct(slug);
+      const images = product.images || [];
+      if (!images.length) return;
+      existingImagesField.style.display = '';
+      existingImagesBox.innerHTML = images.map((img) => `
+        <div style="position:relative;width:64px;height:64px;">
+          <img src="${escapeHtml(mediaUrl(img.image_path))}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:10px;">
+          <button type="button" data-remove-image="${img.id}" title="Remover"
+            style="position:absolute;top:-6px;right:-6px;width:20px;height:20px;border-radius:50%;border:none;background:#A2392A;color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;">
+            <span class="material-symbols-outlined" style="font-size:14px;">close</span>
+          </button>
+        </div>`).join('');
+      existingImagesBox.querySelectorAll('[data-remove-image]').forEach((btn) => {
+        btn.addEventListener('click', async () => {
+          try {
+            await Api.deleteProductImage(productId, btn.dataset.removeImage);
+            btn.closest('div').remove();
+          } catch (err) {
+            alert(err.message);
+          }
+        });
+      });
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  function applyFreeState(isFree) {
+    isFreeInput.checked = isFree;
+    priceInput.disabled = isFree;
+    priceInput.value = isFree ? '0' : (priceInput.value === '0' ? '' : priceInput.value);
+  }
+
+  isFreeInput.addEventListener('change', () => applyFreeState(isFreeInput.checked));
 
   function enterEditMode(product) {
     form.productId.value = product.id;
     form.title.value = product.title;
     form.description.value = product.description || '';
     form.price.value = product.price;
+    applyFreeState(Number(product.price) === 0);
     form.categoryId.value = product.category_id || '';
     form.fileType.value = product.file_type;
     fileInput.required = false;
     fileLabel.textContent = 'Arquivo do material (deixe em branco pra manter o atual)';
     submitBtn.textContent = 'Salvar alterações';
     cancelBtn.style.display = '';
+    loadExistingImages(product.id, product.slug);
     form.scrollIntoView({ behavior: 'smooth' });
   }
 
   function exitEditMode() {
     form.reset();
     form.productId.value = '';
+    applyFreeState(false);
     fileInput.required = true;
     fileLabel.textContent = 'Arquivo do material';
     submitBtn.textContent = 'Publicar';
     cancelBtn.style.display = 'none';
+    existingImagesField.style.display = 'none';
+    existingImagesBox.innerHTML = '';
   }
 
   fileInput.required = true;
@@ -130,6 +236,7 @@ function renderPanel(root, creator) {
     fd.append('fileType', form.fileType.value);
     if (fileInput.files[0]) fd.append('file', fileInput.files[0]);
     if (form.cover.files[0]) fd.append('cover', form.cover.files[0]);
+    Array.from(imagesInput.files).forEach((f) => fd.append('images', f));
 
     try {
       if (editingId) {
@@ -151,13 +258,29 @@ function renderPanel(root, creator) {
     }
   });
 
-  document.getElementById('my-products').addEventListener('click', (e) => {
+  document.getElementById('my-products').addEventListener('click', async (e) => {
     const editBtn = e.target.closest('[data-edit]');
-    if (!editBtn) return;
-    e.stopPropagation();
-    e.preventDefault();
-    const product = JSON.parse(editBtn.dataset.edit);
-    enterEditMode(product);
+    if (editBtn) {
+      e.stopPropagation();
+      e.preventDefault();
+      const product = JSON.parse(editBtn.dataset.edit);
+      enterEditMode(product);
+      return;
+    }
+
+    const deleteBtn = e.target.closest('[data-delete]');
+    if (deleteBtn) {
+      e.stopPropagation();
+      e.preventDefault();
+      const confirmed = confirm(`Excluir "${deleteBtn.dataset.title}"? Ele some da loja, mas quem já comprou continua com acesso ao material.`);
+      if (!confirmed) return;
+      try {
+        await Api.deleteProduct(deleteBtn.dataset.delete);
+        await refreshMyProducts(creator.slug);
+      } catch (err) {
+        alert(err.message);
+      }
+    }
   });
 }
 
@@ -190,7 +313,10 @@ function renderEditableProductCard(p) {
         <div class="product-title">${escapeHtml(p.title)}</div>
         <div class="product-foot">
           <span class="product-price">${formatPrice(p.price)}</span>
-          <button class="btn btn-light" data-edit='${escapeHtml(JSON.stringify(p))}' type="button">Editar</button>
+          <div class="product-actions">
+            <button class="btn btn-light" data-edit='${escapeHtml(JSON.stringify(p))}' type="button">Editar</button>
+            <button class="icon-btn" data-delete="${p.id}" data-title="${escapeHtml(p.title)}" title="Excluir" type="button"><span class="material-symbols-outlined" style="font-size:18px;">delete</span></button>
+          </div>
         </div>
       </div>
     </div>`;

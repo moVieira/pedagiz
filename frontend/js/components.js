@@ -21,8 +21,17 @@ function escapeHtml(str) {
   }[c]));
 }
 
+// Título do produto não tem extensão (ex: "Calendário da Turma") — sem
+// isso no nome do arquivo baixado, o navegador/SO não reconhece que é PDF.
+function downloadFilename(title, ext) {
+  const safeTitle = title || 'material';
+  const safeExt = ext || '';
+  return safeTitle.toLowerCase().endsWith(safeExt.toLowerCase()) ? safeTitle : `${safeTitle}${safeExt}`;
+}
+
 function renderProductCard(p) {
   const tint = tintFor(p.slug || p.title);
+  const isFree = Number(p.price) === 0;
   const cover = p.cover_image
     ? `<img src="${escapeHtml(mediaUrl(p.cover_image))}" alt="${escapeHtml(p.title)}">`
     : '';
@@ -42,17 +51,19 @@ function renderProductCard(p) {
           <span class="product-rating"><span class="material-symbols-outlined filled" style="font-size:13px;">star</span> ${formatRating(p.rating)}</span>
         </div>
         <div class="product-foot">
-          <span class="product-price">${formatPrice(p.price)}</span>
+          <span class="product-price">${isFree ? 'Grátis' : formatPrice(p.price)}</span>
           <div class="product-actions">
-            <button class="icon-btn" data-add-cart="true" title="Adicionar ao carrinho" type="button"><span class="material-symbols-outlined" style="font-size:20px;">add_shopping_cart</span></button>
-            <button class="btn btn-light" data-buy="true" type="button">Comprar</button>
+            ${isFree
+              ? `<button class="btn btn-light" data-view="true" type="button">Baixar grátis</button>`
+              : `<button class="icon-btn" data-add-cart="true" title="Adicionar ao carrinho" type="button"><span class="material-symbols-outlined" style="font-size:20px;">add_shopping_cart</span></button>
+                 <button class="btn btn-light" data-buy="true" type="button">Comprar</button>`}
           </div>
         </div>
       </div>
     </div>`;
 }
 
-/** Baixa o arquivo de um item já comprado (usado em downloads.html e no pós-checkout). */
+/** Baixa o arquivo de um item já comprado (usado em downloads e no pós-checkout). */
 async function downloadFile(btn) {
   const original = btn.innerHTML;
   btn.disabled = true;
@@ -95,7 +106,7 @@ function wireProductActions(scope) {
         cover: card.dataset.cover || null
       });
       if (typeof initHeader === 'function') initHeader();
-      window.location.href = 'carrinho.html';
+      window.location.href = 'carrinho';
       return;
     }
 
@@ -118,17 +129,34 @@ function wireProductActions(scope) {
       return;
     }
 
+    const viewBtn = e.target.closest('[data-view]');
+    if (viewBtn) {
+      e.stopPropagation();
+      const card = viewBtn.closest('.product-card');
+      window.location.href = `produto?slug=${encodeURIComponent(card.dataset.slug)}`;
+      return;
+    }
+
     const favBtn = e.target.closest('[data-fav]');
     if (favBtn) {
       e.stopPropagation();
-      if (!Auth.isLogged()) { window.location.href = 'login.html'; return; }
-      Api.addFavorite(favBtn.dataset.fav)
-        .then(() => { favBtn.querySelector('.material-symbols-outlined')?.classList.add('filled'); })
+      if (!Auth.isLogged()) { window.location.href = 'login'; return; }
+      const icon = favBtn.querySelector('.material-symbols-outlined');
+      const wasFavorited = icon?.classList.contains('filled');
+      const request = wasFavorited ? Api.removeFavorite(favBtn.dataset.fav) : Api.addFavorite(favBtn.dataset.fav);
+      request
+        .then(() => {
+          icon?.classList.toggle('filled', !wasFavorited);
+          favBtn.dispatchEvent(new CustomEvent('favorite-toggled', {
+            bubbles: true,
+            detail: { productId: favBtn.dataset.fav, favorited: !wasFavorited }
+          }));
+        })
         .catch((err) => console.error(err));
       return;
     }
 
     const card = e.target.closest('.product-card');
-    if (card) window.location.href = `produto.html?slug=${encodeURIComponent(card.dataset.slug)}`;
+    if (card) window.location.href = `produto?slug=${encodeURIComponent(card.dataset.slug)}`;
   });
 }

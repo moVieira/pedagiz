@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const params = new URLSearchParams(window.location.search);
 
   if (Auth.isLogged()) {
-    window.location.href = params.get('next') || 'index.html';
+    window.location.href = params.get('next') || '/';
     return;
   }
 
@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
           password: loginForm.password.value
         });
         Auth.setSession(token, user);
-        window.location.href = params.get('next') || 'index.html';
+        window.location.href = params.get('next') || '/';
       } catch (err) {
         errorBox.textContent = err.message;
         errorBox.classList.add('show');
@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
           password: registerForm.password.value
         });
         Auth.setSession(token, user);
-        window.location.href = params.get('next') || 'index.html';
+        window.location.href = params.get('next') || '/';
       } catch (err) {
         errorBox.textContent = err.message;
         errorBox.classList.add('show');
