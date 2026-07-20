@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', async () => {
           <div class="product-cat">${escapeHtml(product.category_name || '')}</div>
           <h1>${escapeHtml(product.title)}</h1>
           <div class="product-creator">
-            <div class="dot-avatar ${tintFor(product.creator_slug)}"></div>
+            <div class="dot-avatar"><span class="material-symbols-outlined">auto_awesome</span></div>
             <a href="loja?slug=${encodeURIComponent(product.creator_slug)}">${escapeHtml(product.creator_name)}</a>
             <span class="product-rating"><span class="material-symbols-outlined filled" style="font-size:14px;">star</span> ${formatRating(product.rating)} (${product.rating_count})</span>
           </div>

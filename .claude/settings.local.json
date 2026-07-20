@@ -142,7 +142,14 @@
       "Bash(curl -s https://pedagiz.com/api/creators/Pedagiz)",
       "Bash(node --check ../frontend/js/loja.js)",
       "PowerShell(& \"C:\\\\Users\\\\moisesf\\\\Downloads\\\\node-v24.18.0-win-x64\\\\node-v24.18.0-win-x64\\\\npm.cmd\" --version)",
-      "Bash(node -e \"JSON.parse\\(require\\('fs'\\).readFileSync\\('.claude/settings.local.json','utf8'\\)\\); console.log\\('JSON válido'\\)\")"
+      "Bash(node -e \"JSON.parse\\(require\\('fs'\\).readFileSync\\('.claude/settings.local.json','utf8'\\)\\); console.log\\('JSON válido'\\)\")",
+      "Bash(curl -s https://pedagiz.com/api/products)",
+      "Bash(curl -s -o /dev/null -w \"categories: %{http_code}\\\\n\" https://pedagiz.com/api/categories)",
+      "Bash(/c/xampp/mysql/bin/mysql.exe -h hayabusa.proxy.rlwy.net -P 18527 -u root -poXYAsoYNpnzOdMSVXDvuJfVexUPygcgA railway -e \"SHOW TABLES;\")",
+      "Bash(cp \"C:/Users/moise/AppData/Local/Temp/claude/c--Users-moise-pastel-e-giz/0111674a-bd08-42be-8a20-b0c753035860/scratchpad/audit-db.js\" \"C:/Users/moise/pastel-e-giz/backend/_audit-db.js\")",
+      "Bash(node _audit-db.js)",
+      "Bash(rm \"C:/Users/moise/pastel-e-giz/backend/_audit-db.js\")",
+      "Bash(curl -s -w \"\\\\nHTTP %{http_code}\\\\n\" https://pedagiz.com/api/products/telefone-matematico-recurso-pedagogico-mrt78h43)"
     ]
   }
 }

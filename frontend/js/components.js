@@ -46,7 +46,7 @@ function renderProductCard(p) {
         <div class="product-cat">${escapeHtml(p.category_name || '')}</div>
         <div class="product-title">${escapeHtml(p.title)}</div>
         <div class="product-creator">
-          <div class="dot-avatar ${tintFor(p.creator_slug)}"></div>
+          <div class="dot-avatar"><span class="material-symbols-outlined">auto_awesome</span></div>
           <span>${escapeHtml(p.creator_name || '')}</span>
           <span class="product-rating"><span class="material-symbols-outlined filled" style="font-size:13px;">star</span> ${formatRating(p.rating)}</span>
         </div>
