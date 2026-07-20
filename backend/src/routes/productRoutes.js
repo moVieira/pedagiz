@@ -22,17 +22,18 @@ router.post(
   '/',
   authRequired,
   adminRequired,
-  upload.fields([{ name: 'file', maxCount: 1 }, { name: 'cover', maxCount: 1 }]),
+  upload.fields([{ name: 'file', maxCount: 1 }, { name: 'cover', maxCount: 1 }, { name: 'images', maxCount: 8 }]),
   productController.create
 );
 router.put(
   '/:id',
   authRequired,
   adminRequired,
-  upload.fields([{ name: 'file', maxCount: 1 }, { name: 'cover', maxCount: 1 }]),
+  upload.fields([{ name: 'file', maxCount: 1 }, { name: 'cover', maxCount: 1 }, { name: 'images', maxCount: 8 }]),
   productController.update
 );
 router.delete('/:id', authRequired, adminRequired, productController.remove);
+router.delete('/:id/images/:imageId', authRequired, adminRequired, productController.removeImage);
 router.post('/:productId/reviews', authRequired, reviewController.create);
 
 module.exports = router;

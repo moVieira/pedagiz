@@ -78,6 +78,11 @@ function renderPanel(root, creator) {
       </div>
       <div class="field"><label for="file" id="file-label">Arquivo do material</label><input type="file" name="file" id="file"></div>
       <div class="field"><label for="cover">Capa (opcional)</label><input type="file" name="cover" id="cover" accept="image/*"></div>
+      <div class="field" id="existing-images-field" style="display:none;">
+        <label>Imagens já publicadas</label>
+        <div id="existing-images" style="display:flex;gap:8px;flex-wrap:wrap;"></div>
+      </div>
+      <div class="field"><label for="images">Mais fotos do produto (opcional, pode selecionar várias)</label><input type="file" name="images" id="images" accept="image/*" multiple></div>
       <div style="display:flex;gap:10px;">
         <button class="btn btn-dark" type="submit" id="submit-btn">Publicar</button>
         <button class="btn btn-outline" type="button" id="cancel-edit-btn" style="display:none;">Cancelar edição</button>
@@ -136,10 +141,44 @@ function renderPanel(root, creator) {
   const form = document.getElementById('product-form');
   const fileInput = document.getElementById('file');
   const fileLabel = document.getElementById('file-label');
+  const imagesInput = document.getElementById('images');
+  const existingImagesField = document.getElementById('existing-images-field');
+  const existingImagesBox = document.getElementById('existing-images');
   const submitBtn = document.getElementById('submit-btn');
   const cancelBtn = document.getElementById('cancel-edit-btn');
   const priceInput = document.getElementById('price');
   const isFreeInput = document.getElementById('isFree');
+
+  async function loadExistingImages(productId, slug) {
+    existingImagesField.style.display = 'none';
+    existingImagesBox.innerHTML = '';
+    try {
+      const { product } = await Api.getProduct(slug);
+      const images = product.images || [];
+      if (!images.length) return;
+      existingImagesField.style.display = '';
+      existingImagesBox.innerHTML = images.map((img) => `
+        <div style="position:relative;width:64px;height:64px;">
+          <img src="${escapeHtml(mediaUrl(img.image_path))}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:10px;">
+          <button type="button" data-remove-image="${img.id}" title="Remover"
+            style="position:absolute;top:-6px;right:-6px;width:20px;height:20px;border-radius:50%;border:none;background:#A2392A;color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;">
+            <span class="material-symbols-outlined" style="font-size:14px;">close</span>
+          </button>
+        </div>`).join('');
+      existingImagesBox.querySelectorAll('[data-remove-image]').forEach((btn) => {
+        btn.addEventListener('click', async () => {
+          try {
+            await Api.deleteProductImage(productId, btn.dataset.removeImage);
+            btn.closest('div').remove();
+          } catch (err) {
+            alert(err.message);
+          }
+        });
+      });
+    } catch (err) {
+      console.error(err);
+    }
+  }
 
   function applyFreeState(isFree) {
     isFreeInput.checked = isFree;
@@ -161,6 +200,7 @@ function renderPanel(root, creator) {
     fileLabel.textContent = 'Arquivo do material (deixe em branco pra manter o atual)';
     submitBtn.textContent = 'Salvar alterações';
     cancelBtn.style.display = '';
+    loadExistingImages(product.id, product.slug);
     form.scrollIntoView({ behavior: 'smooth' });
   }
 
@@ -172,6 +212,8 @@ function renderPanel(root, creator) {
     fileLabel.textContent = 'Arquivo do material';
     submitBtn.textContent = 'Publicar';
     cancelBtn.style.display = 'none';
+    existingImagesField.style.display = 'none';
+    existingImagesBox.innerHTML = '';
   }
 
   fileInput.required = true;
@@ -194,6 +236,7 @@ function renderPanel(root, creator) {
     fd.append('fileType', form.fileType.value);
     if (fileInput.files[0]) fd.append('file', fileInput.files[0]);
     if (form.cover.files[0]) fd.append('cover', form.cover.files[0]);
+    Array.from(imagesInput.files).forEach((f) => fd.append('images', f));
 
     try {
       if (editingId) {

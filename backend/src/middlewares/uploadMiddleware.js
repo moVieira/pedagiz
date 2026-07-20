@@ -21,7 +21,7 @@ const ALLOWED_MATERIAL_EXT = ['.pdf', '.ppt', '.pptx', '.doc', '.docx', '.zip'];
 
 function fileFilter(req, file, cb) {
   const ext = path.extname(file.originalname).toLowerCase();
-  const allowed = file.fieldname === 'cover' ? ALLOWED_COVER_EXT : ALLOWED_MATERIAL_EXT;
+  const allowed = (file.fieldname === 'cover' || file.fieldname === 'images') ? ALLOWED_COVER_EXT : ALLOWED_MATERIAL_EXT;
   if (!allowed.includes(ext)) {
     const err = new Error(`Tipo de arquivo não permitido: ${ext || '(sem extensão)'}`);
     err.status = 400;

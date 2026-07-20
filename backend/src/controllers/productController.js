@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt');
 const crypto = require('crypto');
 const productModel = require('../models/productModel');
+const productImageModel = require('../models/productImageModel');
 const reviewModel = require('../models/reviewModel');
 const categoryModel = require('../models/categoryModel');
 const creatorModel = require('../models/creatorModel');
@@ -28,7 +29,11 @@ async function getBySlug(req, res, next) {
     const product = await productModel.findBySlug(req.params.slug);
     if (!product) return res.status(404).json({ error: 'Produto não encontrado' });
 
-    const reviews = await reviewModel.findByProduct(product.id);
+    const [reviews, images] = await Promise.all([
+      reviewModel.findByProduct(product.id),
+      productImageModel.findByProduct(product.id)
+    ]);
+    product.images = images;
     res.json({ product, reviews });
   } catch (err) {
     next(err);
@@ -44,6 +49,7 @@ async function create(req, res, next) {
       return res.status(400).json({ error: 'O arquivo do produto é obrigatório' });
     }
     const cover = req.files?.cover?.[0];
+    const images = req.files?.images || [];
 
     const { title, slug, description, price, categoryId, fileType } = req.body;
     const id = await productModel.create({
@@ -57,6 +63,9 @@ async function create(req, res, next) {
       coverImage: cover ? `/uploads/${cover.filename}` : null,
       filePath: `uploads/${file.filename}`
     });
+    if (images.length) {
+      await productImageModel.insertMany(id, images.map((img) => `/uploads/${img.filename}`));
+    }
     res.status(201).json({ id });
   } catch (err) {
     next(err);
@@ -70,6 +79,7 @@ async function update(req, res, next) {
 
     const file = req.files?.file?.[0];
     const cover = req.files?.cover?.[0];
+    const images = req.files?.images || [];
     const { title, description, price, categoryId, fileType } = req.body;
 
     await productModel.update(req.params.id, {
@@ -81,6 +91,9 @@ async function update(req, res, next) {
       coverImage: cover ? `/uploads/${cover.filename}` : existing.cover_image,
       filePath: file ? `uploads/${file.filename}` : existing.file_path
     });
+    if (images.length) {
+      await productImageModel.insertMany(req.params.id, images.map((img) => `/uploads/${img.filename}`));
+    }
     res.json({ ok: true });
   } catch (err) {
     next(err);
@@ -93,6 +106,19 @@ async function remove(req, res, next) {
     if (!existing) return res.status(404).json({ error: 'Produto não encontrado' });
 
     await productModel.remove(req.params.id);
+    res.status(204).send();
+  } catch (err) {
+    next(err);
+  }
+}
+
+async function removeImage(req, res, next) {
+  try {
+    const image = await productImageModel.findById(req.params.imageId);
+    if (!image || String(image.product_id) !== String(req.params.id)) {
+      return res.status(404).json({ error: 'Imagem não encontrada' });
+    }
+    await productImageModel.remove(req.params.imageId);
     res.status(204).send();
   } catch (err) {
     next(err);
@@ -138,4 +164,4 @@ async function claimFree(req, res, next) {
   }
 }
 
-module.exports = { list, getBySlug, create, update, remove, claimFree };
+module.exports = { list, getBySlug, create, update, remove, removeImage, claimFree };

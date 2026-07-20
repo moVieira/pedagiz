@@ -52,6 +52,15 @@ CREATE TABLE products (
   FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE SET NULL
 );
 
+CREATE TABLE product_images (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  product_id INT NOT NULL,
+  image_path VARCHAR(255) NOT NULL,
+  sort_order INT NOT NULL DEFAULT 0,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
+);
+
 CREATE TABLE reviews (
   id INT AUTO_INCREMENT PRIMARY KEY,
   product_id INT NOT NULL,

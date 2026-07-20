@@ -14,6 +14,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     const tint = tintFor(product.slug);
     const isFree = Number(product.price) === 0;
 
+    const gallery = [product.cover_image, ...(product.images || []).map((img) => img.image_path)]
+      .filter(Boolean)
+      .filter((src, idx, arr) => arr.indexOf(src) === idx);
+
     root.innerHTML = `
       <div class="breadcrumb">
         <a href="/">Início</a> &nbsp;›&nbsp;
@@ -21,9 +25,19 @@ document.addEventListener('DOMContentLoaded', async () => {
         <span>${escapeHtml(product.title)}</span>
       </div>
       <div class="product-detail">
-        <div class="product-detail-cover ${product.cover_image ? '' : tint}">
-          ${product.cover_image ? `<img src="${escapeHtml(mediaUrl(product.cover_image))}" alt="${escapeHtml(product.title)}">` : ''}
-          <span class="product-type">${escapeHtml(product.file_type)}</span>
+        <div class="product-gallery">
+          <div class="product-detail-cover ${gallery.length ? 'has-image' : tint}" id="gallery-main">
+            ${gallery.length ? `<img id="gallery-main-img" src="${escapeHtml(mediaUrl(gallery[0]))}" alt="${escapeHtml(product.title)}">` : ''}
+            <span class="product-type">${escapeHtml(product.file_type)}</span>
+            ${gallery.length ? `<button class="gallery-zoom-btn" id="gallery-zoom-btn" type="button" title="Ampliar"><span class="material-symbols-outlined" style="font-size:19px;">zoom_in</span></button>` : ''}
+          </div>
+          ${gallery.length > 1 ? `
+          <div class="product-thumbs" id="gallery-thumbs">
+            ${gallery.map((src, i) => `
+              <button class="product-thumb ${i === 0 ? 'active' : ''}" data-idx="${i}" type="button">
+                <img src="${escapeHtml(mediaUrl(src))}" alt="${escapeHtml(product.title)} ${i + 1}">
+              </button>`).join('')}
+          </div>` : ''}
         </div>
         <div class="product-detail-info">
           <div class="product-cat">${escapeHtml(product.category_name || '')}</div>
@@ -55,6 +69,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         ${Auth.isLogged() ? renderReviewForm() : '<p class="empty-state">Faça login para avaliar este material.</p>'}
       </section>
     `;
+
+    if (gallery.length) setupGallery(gallery, product.title);
 
     const buyBtn = document.getElementById('buy-now');
     if (buyBtn) {
@@ -116,6 +132,76 @@ document.addEventListener('DOMContentLoaded', async () => {
     console.error(err);
   }
 });
+
+function setupGallery(gallery, title) {
+  let current = 0;
+  const mainImg = document.getElementById('gallery-main-img');
+  const mainBox = document.getElementById('gallery-main');
+  const thumbs = document.querySelectorAll('.product-thumb');
+
+  function show(idx) {
+    current = (idx + gallery.length) % gallery.length;
+    mainImg.src = mediaUrl(gallery[current]);
+    thumbs.forEach((t) => t.classList.toggle('active', Number(t.dataset.idx) === current));
+  }
+
+  thumbs.forEach((t) => t.addEventListener('click', () => show(Number(t.dataset.idx))));
+  mainBox.addEventListener('click', () => openLightbox(gallery, current, title));
+  const zoomBtn = document.getElementById('gallery-zoom-btn');
+  if (zoomBtn) {
+    zoomBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      openLightbox(gallery, current, title);
+    });
+  }
+
+  window.__gallerySetIndex = show;
+}
+
+function openLightbox(gallery, startIdx, title) {
+  let idx = startIdx;
+  const overlay = document.createElement('div');
+  overlay.className = 'lightbox-overlay';
+  overlay.innerHTML = `
+    <button class="lightbox-close" type="button" title="Fechar"><span class="material-symbols-outlined">close</span></button>
+    ${gallery.length > 1 ? `
+    <button class="lightbox-prev" type="button" title="Anterior"><span class="material-symbols-outlined">chevron_left</span></button>
+    <button class="lightbox-next" type="button" title="Próxima"><span class="material-symbols-outlined">chevron_right</span></button>` : ''}
+    <img src="${escapeHtml(mediaUrl(gallery[idx]))}" alt="${escapeHtml(title)}">
+  `;
+  document.body.appendChild(overlay);
+  document.body.style.overflow = 'hidden';
+
+  const img = overlay.querySelector('img');
+
+  function close() {
+    overlay.remove();
+    document.body.style.overflow = '';
+    document.removeEventListener('keydown', onKeyDown);
+    if (window.__gallerySetIndex) window.__gallerySetIndex(idx);
+  }
+
+  function update(newIdx) {
+    idx = (newIdx + gallery.length) % gallery.length;
+    img.src = mediaUrl(gallery[idx]);
+  }
+
+  function onKeyDown(e) {
+    if (e.key === 'Escape') close();
+    if (e.key === 'ArrowLeft') update(idx - 1);
+    if (e.key === 'ArrowRight') update(idx + 1);
+  }
+
+  overlay.addEventListener('click', (e) => {
+    if (e.target === overlay) close();
+  });
+  overlay.querySelector('.lightbox-close').addEventListener('click', close);
+  const prevBtn = overlay.querySelector('.lightbox-prev');
+  const nextBtn = overlay.querySelector('.lightbox-next');
+  if (prevBtn) prevBtn.addEventListener('click', () => update(idx - 1));
+  if (nextBtn) nextBtn.addEventListener('click', () => update(idx + 1));
+  document.addEventListener('keydown', onKeyDown);
+}
 
 function renderReviews(reviews) {
   if (!reviews.length) return '<p class="empty-state">Ainda não há avaliações para este material.</p>';
