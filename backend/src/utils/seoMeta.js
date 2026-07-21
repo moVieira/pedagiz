@@ -17,15 +17,25 @@ function escapeAttr(str) {
   }[c]));
 }
 
+// "<" é o único caractere de JSON.stringify() perigoso dentro de uma tag
+// <script>: um título/descrição contendo literalmente "</script>" fecharia
+// o bloco JSON-LD mais cedo e quebraria o HTML. < é indistinguível de
+// "<" pro parser JSON, então a leitura do JSON-LD não muda.
+function jsonLdScript(data) {
+  return `<script type="application/ld+json">${JSON.stringify(data).replace(/</g, '\\u003c')}</script>`;
+}
+
 // O HTML estático já vem com <title> e sem <meta description>/Open Graph
 // — essa função troca o título e injeta as tags certas pro produto/loja
 // específico antes de mandar a página pro navegador (ou pro rastreador),
 // já que o preenchimento via JavaScript não é visto por quem não executa
 // JS (rastreadores de redes sociais, e nem sempre o próprio Google).
-function injectMeta(template, { title, description, image, url }) {
+function injectMeta(template, { title, description, image, imageWidth, imageHeight, url, jsonLd }) {
   // Função como substituto (em vez de string) evita que "$&", "$1" etc. no
   // título/descrição sejam interpretados como padrões especiais do replace.
   let html = template.replace(/<title>.*?<\/title>/s, () => `<title>${escapeAttr(title)}</title>`);
+
+  const jsonLdBlocks = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]).map(jsonLdScript) : [];
 
   const tags = [
     `<meta name="description" content="${escapeAttr(description)}">`,
@@ -36,7 +46,10 @@ function injectMeta(template, { title, description, image, url }) {
     `<meta property="og:description" content="${escapeAttr(description)}">`,
     `<meta property="og:url" content="${escapeAttr(url)}">`,
     image ? `<meta property="og:image" content="${escapeAttr(image)}">` : '',
-    `<meta name="twitter:card" content="${image ? 'summary_large_image' : 'summary'}">`
+    (image && imageWidth) ? `<meta property="og:image:width" content="${escapeAttr(imageWidth)}">` : '',
+    (image && imageHeight) ? `<meta property="og:image:height" content="${escapeAttr(imageHeight)}">` : '',
+    `<meta name="twitter:card" content="${image ? 'summary_large_image' : 'summary'}">`,
+    ...jsonLdBlocks
   ].filter(Boolean).join('\n');
 
   return html.replace('</head>', () => `${tags}\n</head>`);

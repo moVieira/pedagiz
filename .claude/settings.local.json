@@ -140,7 +140,11 @@
       "Bash(curl -s http://localhost:4338/ads.txt)",
       "Bash(curl -s https://pedagiz.com/api/creators/Pedagiz)",
       "Bash(node --check ../frontend/js/loja.js)",
-      "PowerShell(& \"C:\\\\Users\\\\moisesf\\\\Downloads\\\\node-v24.18.0-win-x64\\\\node-v24.18.0-win-x64\\\\npm.cmd\" --version)"
+      "PowerShell(& \"C:\\\\Users\\\\moisesf\\\\Downloads\\\\node-v24.18.0-win-x64\\\\node-v24.18.0-win-x64\\\\npm.cmd\" --version)",
+      "PowerShell(git config --global user.name \"moVieira\")",
+      "PowerShell(git config --global user.email moisesfreire0202@gmail.com)",
+      "PowerShell(git config --global user.name)",
+      "PowerShell(git config --global user.email)"
     ]
   }
 }

@@ -33,7 +33,7 @@ function renderProductCard(p) {
   const tint = tintFor(p.slug || p.title);
   const isFree = Number(p.price) === 0;
   const cover = p.cover_image
-    ? `<img src="${escapeHtml(mediaUrl(p.cover_image))}" alt="${escapeHtml(p.title)}">`
+    ? `<img src="${escapeHtml(mediaUrl(p.cover_image))}" alt="${escapeHtml(p.title)}" loading="lazy">`
     : '';
   return `
     <div class="product-card" data-slug="${escapeHtml(p.slug)}" data-id="${p.id}" data-price="${p.price}" data-title="${escapeHtml(p.title)}" data-creator="${escapeHtml(p.creator_name || '')}" data-cover="${escapeHtml(p.cover_image || '')}">
