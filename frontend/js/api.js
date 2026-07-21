@@ -47,6 +47,16 @@ async function apiRequest(path, { method = 'GET', body, isForm = false, auth = f
     body: body ? (isForm ? body : JSON.stringify(body)) : undefined
   });
 
+  // Token expirado/inválido: a sessão salva no navegador não serve mais pra
+  // nada, então desloga e manda pro login em vez de deixar a página presa
+  // num estado "logado" que nenhuma chamada à API realmente atende.
+  if (auth && res.status === 401) {
+    Auth.clearSession();
+    const next = encodeURIComponent(window.location.pathname + window.location.search);
+    window.location.href = `login.html?next=${next}`;
+    return new Promise(() => {}); // trava aqui: a navegação já está a caminho
+  }
+
   if (res.status === 204) return null;
 
   let data = null;
