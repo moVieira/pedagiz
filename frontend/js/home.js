@@ -41,8 +41,7 @@ function renderHeroArt(container, products) {
   if (!featured.length) return;
 
   container.innerHTML = featured.map((p, i) => {
-    const typeLabel = HERO_ART_TYPE_LABEL[p.file_type] || 'material';
-    const caption = `${typeLabel} · ${(p.category_name || p.creator_name || '').toLowerCase()}`;
+    const caption = (p.category_name || HERO_ART_TYPE_LABEL[p.file_type] || p.creator_name || '').toLowerCase();
     const cover = p.cover_image
       ? `<img src="${escapeHtml(mediaUrl(p.cover_image))}" alt="${escapeHtml(p.title)}">`
       : '';
