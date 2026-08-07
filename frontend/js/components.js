@@ -63,6 +63,19 @@ function renderProductCard(p) {
     </div>`;
 }
 
+// Um único produto com dado inesperado (ex: capa com valor inválido) não
+// deve derrubar a lista inteira — isola a falha nesse card e loga qual
+// produto quebrou, em vez de deixar o .map() propagar e a página inteira
+// cair no "não foi possível carregar".
+function renderProductCardSafe(p) {
+  try {
+    return renderProductCard(p);
+  } catch (err) {
+    console.error('Falha ao renderizar o card do produto', p && (p.id ?? p.slug), err);
+    return '';
+  }
+}
+
 /** Baixa o arquivo de um item já comprado (usado em downloads e no pós-checkout). */
 async function downloadFile(btn) {
   const original = btn.innerHTML;

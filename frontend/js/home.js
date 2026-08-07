@@ -8,11 +8,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const params = new URLSearchParams(window.location.search);
   const categoria = params.get('categoria');
   const busca = params.get('busca');
-  const verTodos = params.get('ver') === 'todos';
-  // A vitrine "Em destaque" é só uma prévia (por isso o corte de 8) — mas
-  // categoria, busca e "ver tudo" são navegações explícitas do usuário
-  // pedindo a lista inteira, então nelas o corte não deve valer.
-  const showAll = Boolean(categoria || busca || verTodos);
+  const hasFilter = Boolean(categoria || busca);
 
   try {
     const { products } = await Api.listProducts(categoria ? { category: categoria } : {});
@@ -22,25 +18,24 @@ document.addEventListener('DOMContentLoaded', async () => {
       : products;
 
     if (grid) {
-      const list = showAll ? visible : visible.slice(0, 8);
-      grid.innerHTML = list.map(renderProductCard).join('')
+      grid.innerHTML = visible.map(renderProductCardSafe).join('')
         || '<p class="empty-state">Nenhum material encontrado.</p>';
     }
 
     if (heading && subheading && seeAllLink) {
       if (busca) {
         heading.textContent = `Resultados para "${busca}"`;
-        subheading.textContent = `${visible.length} material(is) encontrado(s)`;
-        seeAllLink.style.display = 'none';
+        subheading.textContent = `${visible.length} materiais encontrado(s)`;
       } else if (categoria) {
         heading.textContent = visible[0]?.category_name || 'Categoria';
-        subheading.textContent = `${visible.length} material(is) nessa categoria`;
-        seeAllLink.style.display = 'none';
-      } else if (verTodos) {
-        heading.textContent = 'Todos os materiais';
-        subheading.textContent = `${visible.length} material(is) disponíveis`;
-        seeAllLink.style.display = 'none';
+        subheading.textContent = `${visible.length} materiais nessa categoria`;
+      } else {
+        heading.textContent = 'Nossos materiais';
+        subheading.textContent = `${visible.length} materiais disponíveis pra baixar`;
       }
+      // Sem filtro a home já mostra o catálogo inteiro — "Ver tudo" só faz
+      // sentido como forma de sair de uma categoria/busca aplicada.
+      seeAllLink.style.display = hasFilter ? '' : 'none';
     }
 
     if (heroArt) renderHeroArt(heroArt, products);

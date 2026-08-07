@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     grid.innerHTML = favorites.length
-      ? favorites.map(renderProductCard).join('')
+      ? favorites.map(renderProductCardSafe).join('')
       : '<p class="empty-state">Você ainda não favoritou nenhum material.</p>';
 
     grid.querySelectorAll('[data-fav] .material-symbols-outlined').forEach((icon) => icon.classList.add('filled'));

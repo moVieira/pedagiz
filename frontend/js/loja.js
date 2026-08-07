@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         </div>
       </div>
       <div class="product-grid" id="store-products" style="margin-top:28px;">
-        ${products.map(renderProductCard).join('') || '<p class="empty-state">Nenhum material publicado ainda.</p>'}
+        ${products.map(renderProductCardSafe).join('') || '<p class="empty-state">Nenhum material publicado ainda.</p>'}
       </div>
     `;
 
