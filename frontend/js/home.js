@@ -1,10 +1,18 @@
 document.addEventListener('DOMContentLoaded', async () => {
   const grid = document.getElementById('featured-grid');
   const heroArt = document.getElementById('hero-art');
+  const heading = document.getElementById('featured-heading');
+  const subheading = document.getElementById('featured-subheading');
+  const seeAllLink = document.getElementById('see-all-link');
 
   const params = new URLSearchParams(window.location.search);
   const categoria = params.get('categoria');
   const busca = params.get('busca');
+  const verTodos = params.get('ver') === 'todos';
+  // A vitrine "Em destaque" é só uma prévia (por isso o corte de 8) — mas
+  // categoria, busca e "ver tudo" são navegações explícitas do usuário
+  // pedindo a lista inteira, então nelas o corte não deve valer.
+  const showAll = Boolean(categoria || busca || verTodos);
 
   try {
     const { products } = await Api.listProducts(categoria ? { category: categoria } : {});
@@ -14,8 +22,25 @@ document.addEventListener('DOMContentLoaded', async () => {
       : products;
 
     if (grid) {
-      grid.innerHTML = visible.slice(0, 8).map(renderProductCard).join('')
+      const list = showAll ? visible : visible.slice(0, 8);
+      grid.innerHTML = list.map(renderProductCard).join('')
         || '<p class="empty-state">Nenhum material encontrado.</p>';
+    }
+
+    if (heading && subheading && seeAllLink) {
+      if (busca) {
+        heading.textContent = `Resultados para "${busca}"`;
+        subheading.textContent = `${visible.length} material(is) encontrado(s)`;
+        seeAllLink.style.display = 'none';
+      } else if (categoria) {
+        heading.textContent = visible[0]?.category_name || 'Categoria';
+        subheading.textContent = `${visible.length} material(is) nessa categoria`;
+        seeAllLink.style.display = 'none';
+      } else if (verTodos) {
+        heading.textContent = 'Todos os materiais';
+        subheading.textContent = `${visible.length} material(is) disponíveis`;
+        seeAllLink.style.display = 'none';
+      }
     }
 
     if (heroArt) renderHeroArt(heroArt, products);
