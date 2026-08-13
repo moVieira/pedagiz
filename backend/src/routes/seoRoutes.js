@@ -101,6 +101,7 @@ router.get('/sitemap.xml', async (req, res, next) => {
 
     const urls = [
       { loc: `${SITE_URL}/`, priority: '1.0' },
+      { loc: `${SITE_URL}/contato`, priority: '0.3' },
       ...creatorSlugs.map((slug) => ({ loc: `${SITE_URL}/loja?slug=${encodeURIComponent(slug)}`, priority: '0.7' })),
       ...products.map((p) => ({
         loc: `${SITE_URL}/produto?slug=${encodeURIComponent(p.slug)}`,

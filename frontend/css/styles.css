@@ -374,6 +374,29 @@ h2.section-title { font-family: var(--font-display); font-weight: 700; font-size
 .auth-switch { margin-top: 18px; font-size: 14px; color: var(--ink-soft); text-align: center; }
 .auth-switch a { color: var(--accent); font-weight: 600; }
 
+/* ---------- Contato ---------- */
+.contact-shell { max-width: 480px; margin: 0 auto; padding: 72px 32px 96px; text-align: center; }
+.contact-icon {
+  width: 72px; height: 72px; border-radius: 22px; margin: 0 auto 24px;
+  background: linear-gradient(135deg, var(--tint-a), var(--tint-e));
+  display: flex; align-items: center; justify-content: center;
+}
+.contact-icon .material-symbols-outlined { font-size: 34px; color: var(--ink); }
+.contact-shell h1 { font-family: var(--font-display); font-weight: 700; font-size: 28px; margin: 0 0 10px; }
+.contact-shell p.sub { color: var(--ink-soft); font-size: 15px; line-height: 1.55; margin: 0 0 32px; }
+.contact-email-box {
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  background: var(--surface); border: 1px solid var(--border); border-radius: 14px;
+  padding: 16px 20px; margin: 0 0 24px; font-size: 16px; font-weight: 600; color: var(--ink);
+  box-shadow: var(--shadow-card);
+}
+.contact-email-box .material-symbols-outlined { font-size: 20px; color: var(--ink-soft); }
+.contact-copy-btn {
+  border: none; background: transparent; cursor: pointer; display: flex; align-items: center;
+  justify-content: center; width: 30px; height: 30px; border-radius: 999px; color: var(--ink-soft); margin-left: 4px; padding: 0;
+}
+.contact-copy-btn:hover { background: var(--chip-bg); color: var(--ink); }
+
 /* ---------- Carrinho / checkout ---------- */
 .checkout-layout { display: grid; grid-template-columns: 1.4fr 1fr; gap: 32px; padding: 40px 0 64px; align-items: start; }
 .cart-item {
